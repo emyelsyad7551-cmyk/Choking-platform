@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resuscitation Mastery Platform | AHA 2026 · TBL</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  /* Plain CSS fallback so hide/show (tabs, locked banners, modals) still works
+     even if the Tailwind CDN script fails to load or run — e.g. when the file
+     is opened directly (file://) from WhatsApp/email with no internet access. */
+  .hidden{display:none !important;}
+  :root{
+    --navy:#0b3d5c; --navy-deep:#082c42; --sky:#1e9bd7; --sky-soft:#e5f4fb;
+    --emerald:#0f9d70; --emerald-soft:#e3f7ef; --rose:#d64545; --rose-soft:#fbe8e8;
+    --amber:#e0972a; --amber-soft:#fbf1de; --paper:#f4f8fb; --card:#ffffff; --ink:#0d2635; --line:#dbe6ee;
+    --violet:#6d5bd0; --violet-soft:#ece9fb;
+  }
+  *{font-family:'Inter',sans-serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  body{background:var(--paper);color:var(--ink);}
+  ::-webkit-scrollbar{height:8px;width:8px}
+  ::-webkit-scrollbar-thumb{background:#c3d4e0;border-radius:10px}
+
+  .ekg-wrap{overflow:hidden;height:34px}
+  .ekg-line{stroke:var(--sky);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;
+    stroke-dasharray:600; stroke-dashoffset:600; animation:draw 3.2s linear infinite;}
+  @keyframes draw{ to{stroke-dashoffset:-600;} }
+
+  .tab-btn{transition:.15s ease; border-bottom:3px solid transparent; white-space:nowrap;}
+  .tab-btn.active{border-color:var(--sky); color:var(--navy); background:var(--sky-soft);}
+  .tab-btn:not(.active):hover{background:#eef4f8;}
+  .tab-btn.locked{opacity:.4; cursor:not-allowed;}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px;}
+  .section-title{color:var(--navy); font-weight:900;}
+
+  .opt-btn{border:1.5px solid var(--line); border-radius:10px; transition:.15s;}
+  .opt-btn:hover{border-color:var(--sky); background:var(--sky-soft);}
+  .opt-btn.selected{border-color:var(--sky); background:var(--sky-soft); box-shadow:0 0 0 2px var(--sky) inset;}
+  .opt-btn.correct{border-color:var(--emerald); background:var(--emerald-soft); box-shadow:0 0 0 2px var(--emerald) inset;}
+  .opt-btn.wrong{border-color:var(--rose); background:var(--rose-soft); box-shadow:0 0 0 2px var(--rose) inset; opacity:.7;}
+  .opt-btn.disabled{pointer-events:none;}
+
+  .step-score-btn{border:1.5px solid var(--line); border-radius:8px; transition:.15s; font-weight:700;}
+  .step-score-btn.sc0.active{background:var(--rose); color:#fff; border-color:var(--rose);}
+  .step-score-btn.sc1.active{background:var(--amber); color:#fff; border-color:var(--amber);}
+  .step-score-btn.sc2.active{background:var(--emerald); color:#fff; border-color:var(--emerald);}
+
+  .badge{display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:.75rem; font-weight:700;}
+  .modal-bg{background:rgba(8,44,66,.55); backdrop-filter:blur(2px);}
+  .scenario-box{background:var(--amber-soft); border:1px solid var(--amber); border-radius:10px; padding:12px 14px; font-size:.85rem;}
+
+  .team-btn{border:2px solid var(--line); border-radius:14px; padding:10px 14px; text-align:center; transition:.15s; background:#fff; min-width:96px;}
+  .team-btn:hover{border-color:var(--violet); background:var(--violet-soft);}
+  .team-btn.active{border-color:var(--violet); background:var(--violet-soft); box-shadow:0 0 0 2px var(--violet) inset;}
+  .team-btn .team-icon{font-size:1.3rem; color:var(--violet);}
+  .team-btn .team-score{font-size:.7rem; font-weight:800; margin-top:2px; color:var(--navy);}
+
+  .switch{position:relative; display:inline-block; width:54px; height:30px; flex-shrink:0; cursor:pointer;}
+  .switch input{opacity:0; width:0; height:0;}
+  .switch-track{position:absolute; inset:0; background:var(--rose); border-radius:999px; transition:.2s;}
+  .switch-track::before{content:""; position:absolute; width:24px; height:24px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s; box-shadow:0 1px 3px rgba(0,0,0,.3);}
+  .switch input:checked + .switch-track{background:var(--emerald);}
+  .switch input:checked + .switch-track::before{transform:translateX(24px);}
+  .lock-icon-btn{cursor:pointer; padding:2px 4px; border-radius:6px;}
+  .lock-icon-btn:hover{background:rgba(0,0,0,.06);}
+
+  @media print{
+    body *{visibility:hidden;}
+    #printArea, #printArea *{visibility:visible;}
+    #printArea{position:absolute; top:0; left:0; right:0; margin:0; padding:0;}
+    .no-print{display:none !important;}
+  }
+  .phase-divider{background:linear-gradient(90deg, var(--navy), var(--sky)); height:3px; border-radius:3px;}
+  .locked-banner{background:var(--rose-soft); border:1px solid var(--rose); color:#8a2e2e; border-radius:12px; padding:16px;}
+</style>
+</head>
+<body class="pb-24">
+
+<!-- ============ HEADER ============ -->
+<header class="sticky top-0 z-40 bg-white border-b" style="border-color:var(--line)">
+  <div class="max-w-7xl mx-auto px-4 pt-3">
+    <div class="flex items-center justify-between gap-4 flex-wrap">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center text-white text-lg" style="background:var(--navy)">
+          <i class="fa-solid fa-heart-pulse"></i>
+        </div>
+        <div>
+          <h1 class="text-lg md:text-xl font-black" style="color:var(--navy)">Choking & CPR Resuscitation Mastery Platform</h1>
+          <p class="text-xs text-slate-500 mono">AHA 2026 Guidelines · Team-Based Learning (TBL) · OSCE Clinical Evaluation</p>
+        </div>
+      </div>
+      <div class="ekg-wrap w-40 md:w-56 hidden sm:block">
+        <svg viewBox="0 0 600 34" class="w-full h-full">
+          <path class="ekg-line" d="M0,17 L60,17 L75,17 L85,2 L95,32 L105,17 L140,17 L150,5 L160,17 L200,17 L215,17 L225,2 L235,32 L245,17 L280,17 L290,5 L300,17 L340,17 L355,17 L365,2 L375,32 L385,17 L420,17 L430,5 L440,17 L480,17 L495,17 L505,2 L515,32 L525,17 L560,17 L570,5 L580,17 L600,17"/>
+        </svg>
+      </div>
+    </div>
+    <!-- TAB NAV -->
+    <nav id="tabNav" class="flex gap-1 mt-3 overflow-x-auto text-sm items-center">
+      <button data-tab="session" class="tab-btn active px-4 py-2.5 rounded-t-lg font-bold flex items-center gap-2"><i class="fa-solid fa-user-pen"></i> Session Info</button>
+      <button data-tab="irat" data-restricted="1" class="tab-btn px-4 py-2.5 rounded-t-lg font-bold flex items-center gap-2"><i class="fa-solid fa-user-check"></i> iRAT <i class="fa-solid fa-lock lock-icon lock-icon-btn text-xs" data-lock-icon="irat" style="color:var(--rose)"></i></button>
+      <button data-tab="trat" data-restricted="1" class="tab-btn px-4 py-2.5 rounded-t-lg font-bold flex items-center gap-2"><i class="fa-solid fa-people-group"></i> tRAT <i class="fa-solid fa-lock lock-icon lock-icon-btn text-xs" data-lock-icon="trat" style="color:var(--rose)"></i></button>
+      <button data-tab="theory" data-restricted="1" class="tab-btn px-4 py-2.5 rounded-t-lg font-bold flex items-center gap-2"><i class="fa-solid fa-book-medical"></i> Pre/Post Theory Test <i class="fa-solid fa-lock lock-icon lock-icon-btn text-xs" data-lock-icon="theory" style="color:var(--rose)"></i></button>
+      <button data-tab="osce" data-restricted="1" class="tab-btn px-4 py-2.5 rounded-t-lg font-bold flex items-center gap-2"><i class="fa-solid fa-clipboard-check"></i> OSCE Practical <i class="fa-solid fa-lock lock-icon lock-icon-btn text-xs" data-lock-icon="osce" style="color:var(--rose)"></i></button>
+      <button data-tab="dashboard" class="tab-btn px-4 py-2.5 rounded-t-lg font-bold flex items-center gap-2"><i class="fa-solid fa-chart-column"></i> Analytics Dashboard</button>
+      <button data-tab="export" class="tab-btn px-4 py-2.5 rounded-t-lg font-bold flex items-center gap-2"><i class="fa-solid fa-file-export"></i> Export & Print</button>
+      <button id="btnInstructor" class="ms-auto px-4 py-2.5 rounded-lg font-bold flex items-center gap-2 text-white shrink-0" style="background:var(--violet)"><i class="fa-solid fa-user-shield"></i> Instructor Controls</button>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 mt-6 space-y-6">
+
+  <!-- ============ SESSION TAB ============ -->
+  <section id="tab-session" class="tab-panel space-y-4">
+
+    <!-- Welcome banner -->
+    <div class="card p-6" style="background:linear-gradient(135deg, var(--navy), var(--navy-deep)); border:none;">
+      <div class="flex items-center gap-4 flex-wrap">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl shrink-0" style="background:rgba(255,255,255,.15); color:#fff;">
+          <i class="fa-solid fa-hand-holding-heart"></i>
+        </div>
+        <div>
+          <h2 class="text-lg md:text-xl font-black text-white">Welcome! Let's get started</h2>
+          <p class="text-sm mt-0.5" style="color:#cfe4f2;">Fill in your details below, then wait for your instructor to unlock each section when it's time.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick start steps -->
+    <div class="card p-5">
+      <h3 class="section-title text-base mb-4"><i class="fa-solid fa-route me-1"></i> How this works — 4 easy steps</h3>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="p-4 rounded-xl text-center" style="background:var(--sky-soft)">
+          <div class="w-10 h-10 mx-auto rounded-full flex items-center justify-center font-black text-white mb-2" style="background:var(--sky)">1</div>
+          <p class="text-sm font-bold" style="color:var(--navy)">Enter your info</p>
+          <p class="text-xs text-slate-500 mt-1">Fill in your name and the test phase below</p>
+        </div>
+        <div class="p-4 rounded-xl text-center" style="background:var(--amber-soft)">
+          <div class="w-10 h-10 mx-auto rounded-full flex items-center justify-center font-black text-white mb-2" style="background:var(--amber)">2</div>
+          <p class="text-sm font-bold" style="color:var(--navy)">Wait to be unlocked</p>
+          <p class="text-xs text-slate-500 mt-1">Your instructor opens each section when ready</p>
+        </div>
+        <div class="p-4 rounded-xl text-center" style="background:var(--emerald-soft)">
+          <div class="w-10 h-10 mx-auto rounded-full flex items-center justify-center font-black text-white mb-2" style="background:var(--emerald)">3</div>
+          <p class="text-sm font-bold" style="color:var(--navy)">Complete the tests</p>
+          <p class="text-xs text-slate-500 mt-1">Answer iRAT, tRAT, Theory, and OSCE as unlocked</p>
+        </div>
+        <div class="p-4 rounded-xl text-center" style="background:var(--violet-soft)">
+          <div class="w-10 h-10 mx-auto rounded-full flex items-center justify-center font-black text-white mb-2" style="background:var(--violet)">4</div>
+          <p class="text-sm font-bold" style="color:var(--navy)">Save your session</p>
+          <p class="text-xs text-slate-500 mt-1">Press the green Save button when you're done</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Simplified form -->
+    <div class="card p-5">
+      <h2 class="section-title text-lg mb-4"><i class="fa-solid fa-id-card me-1"></i> Your Information</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-bold mb-1"><i class="fa-solid fa-user text-slate-400 me-1"></i> Your Name / Student Code</label>
+          <input id="f_name" type="text" placeholder="e.g. John Smith / STD-014" class="w-full border rounded-xl px-4 py-3 text-base" style="border-color:var(--line)">
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1"><i class="fa-solid fa-flag-checkered text-slate-400 me-1"></i> Test Phase</label>
+          <select id="f_phase" class="w-full border rounded-xl px-4 py-3 text-base" style="border-color:var(--line)">
+            <option value="Pre">Pre-Test</option>
+            <option value="Post">Post-Test</option>
+            <option value="Follow">Follow-Up</option>
+          </select>
+        </div>
+      </div>
+      <details class="mt-4 group">
+        <summary class="cursor-pointer text-sm font-bold text-slate-500 flex items-center gap-1 select-none">
+          <i class="fa-solid fa-chevron-right text-xs transition-transform group-open:rotate-90"></i> More details (optional — for instructors)
+        </summary>
+        <div class="grid md:grid-cols-2 gap-4 mt-3">
+          <div>
+            <label class="block text-sm font-bold mb-1"><i class="fa-solid fa-user-shield text-slate-400 me-1"></i> Evaluator / Instructor Name</label>
+            <input id="f_eval" type="text" placeholder="e.g. Dr. Sarah Johnson" class="w-full border rounded-lg px-3 py-2" style="border-color:var(--line)">
+          </div>
+          <div>
+            <label class="block text-sm font-bold mb-1"><i class="fa-solid fa-calendar-days text-slate-400 me-1"></i> Session Date & Time</label>
+            <input id="f_datetime" type="datetime-local" class="w-full border rounded-lg px-3 py-2" style="border-color:var(--line)">
+          </div>
+        </div>
+      </details>
+      <button id="btnNewSession" class="w-full mt-5 border-2 rounded-xl py-2.5 font-bold text-sm flex items-center justify-center gap-2" style="border-color:var(--line); color:#64748b">
+        <i class="fa-solid fa-rotate"></i> Start Over (clear everything)
+      </button>
+    </div>
+
+    <!-- Live checklist -->
+    <div class="card p-5">
+      <h3 class="section-title text-base mb-3"><i class="fa-solid fa-list-check me-1"></i> What's available right now</h3>
+      <div id="statusChecklist" class="grid sm:grid-cols-2 gap-2"></div>
+    </div>
+
+    <!-- Save -->
+    <div class="card p-5 flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div>
+        <h3 class="font-bold" style="color:var(--navy)"><i class="fa-solid fa-circle-info me-1"></i> Session Status</h3>
+        <p id="sessionStatus" class="text-sm text-slate-500 mt-1">Not saved yet — finish your tests above, then press Save.</p>
+      </div>
+      <button id="btnFinalize" class="px-6 py-3.5 rounded-xl text-white font-bold flex items-center gap-2 text-base justify-center" style="background:var(--emerald)">
+        <i class="fa-solid fa-floppy-disk"></i> Save My Session
+      </button>
+    </div>
+  </section>
+
+
+  <!-- ============ iRAT TAB ============ -->
+  <section id="tab-irat" class="tab-panel hidden space-y-4">
+    <div id="iratGateBanner" class="locked-banner hidden">
+      <p class="font-bold"><i class="fa-solid fa-hourglass-half me-1"></i> Complete the Pre-Test first</p>
+      <p class="text-sm mt-1">Finish and submit the Pre-Test in the "Pre/Post Theory Test" tab before this section becomes available.</p>
+    </div>
+    <div id="iratLockedBanner" class="locked-banner hidden">
+      <p class="font-bold"><i class="fa-solid fa-lock me-1"></i> This section is locked</p>
+      <p class="text-sm mt-1 mb-3">Ask your instructor for the iRAT access code, then enter it below.</p>
+      <div class="flex gap-2 flex-wrap">
+        <input id="sectionCodeInput-irat" type="text" placeholder="Enter code" class="border rounded-lg px-3 py-2 text-sm" style="border-color:var(--line)" onkeydown="if(event.key==='Enter') app.unlockWithCode('irat')">
+        <button onclick="app.unlockWithCode('irat')" class="px-4 py-2 rounded-lg text-white font-bold text-sm" style="background:var(--navy)">Unlock</button>
+      </div>
+      <p id="sectionCodeError-irat" class="text-sm mt-2 hidden" style="color:var(--rose)">Incorrect code. Try again.</p>
+    </div>
+    <div id="iratContent">
+      <div class="card p-5">
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+          <h2 class="section-title text-lg"><i class="fa-solid fa-user-check me-1"></i> iRAT — Individual Readiness Assurance Test</h2>
+          <div class="flex items-center gap-2">
+            <div id="iratTimerBadge" class="badge mono" style="background:var(--sky-soft); color:var(--navy)"></div>
+            <div id="iratScoreBadge" class="badge" style="background:var(--sky-soft); color:var(--navy)">Not submitted yet</div>
+          </div>
+        </div>
+        <p class="text-sm text-slate-500 mb-4">Individual readiness test — select one answer per question, then click "Submit Answers". The timer starts as soon as you open this tab.</p>
+        <div id="iratQuestions" class="space-y-4"></div>
+        <div class="flex gap-3 mt-5">
+          <button id="btnGradeIrat" onclick="app.gradeSingle('irat')" class="px-5 py-2.5 rounded-lg text-white font-bold" style="background:var(--navy)"><i class="fa-solid fa-calculator me-1"></i> Submit Answers</button>
+          <button onclick="app.resetModule('irat')" class="px-4 py-2.5 rounded-lg font-bold border" style="border-color:var(--rose); color:var(--rose)">Reset</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ tRAT TAB (5 team groups) ============ -->
+  <section id="tab-trat" class="tab-panel hidden space-y-4">
+    <div id="tratGateBanner" class="locked-banner hidden">
+      <p class="font-bold"><i class="fa-solid fa-hourglass-half me-1"></i> Complete the Pre-Test first</p>
+      <p class="text-sm mt-1">Finish and submit the Pre-Test in the "Pre/Post Theory Test" tab before this section becomes available.</p>
+    </div>
+    <div id="tratLockedBanner" class="locked-banner hidden">
+      <p class="font-bold"><i class="fa-solid fa-lock me-1"></i> This section is locked</p>
+      <p class="text-sm mt-1 mb-3">Ask your instructor for the tRAT access code, then enter it below.</p>
+      <div class="flex gap-2 flex-wrap">
+        <input id="sectionCodeInput-trat" type="text" placeholder="Enter code" class="border rounded-lg px-3 py-2 text-sm" style="border-color:var(--line)" onkeydown="if(event.key==='Enter') app.unlockWithCode('trat')">
+        <button onclick="app.unlockWithCode('trat')" class="px-4 py-2 rounded-lg text-white font-bold text-sm" style="background:var(--navy)">Unlock</button>
+      </div>
+      <p id="sectionCodeError-trat" class="text-sm mt-2 hidden" style="color:var(--rose)">Incorrect code. Try again.</p>
+    </div>
+    <div id="tratContent" class="space-y-4">
+      <div class="card p-5">
+        <h2 class="section-title text-lg mb-1"><i class="fa-solid fa-people-group me-1"></i> tRAT — Team Readiness Assurance Test</h2>
+        <p class="text-sm text-slate-500 mb-4">Split the class into 5 teams. Each team picks its own icon below to join, discusses each question together, then scratches one answer at a time (IF-AT). Correct on the 1st try = 4 points, 2nd = 2, 3rd = 1, 4th = 0.</p>
+        <div id="teamSelector" class="flex flex-wrap gap-3 mb-2"></div>
+      </div>
+
+      <div class="card p-5">
+        <h3 class="section-title mb-3"><i class="fa-solid fa-trophy me-1"></i> Live Team Leaderboard</h3>
+        <div id="teamLeaderboard" class="space-y-2"></div>
+      </div>
+
+      <div class="card p-5">
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+          <h2 id="tratActiveTeamTitle" class="section-title text-lg"><i class="fa-solid fa-users me-1"></i> Team 1 — Answer Sheet</h2>
+          <div class="flex items-center gap-2">
+            <div id="tratTimerBadge" class="badge mono" style="background:var(--sky-soft); color:var(--navy)"></div>
+            <div id="tratScoreBadge" class="badge" style="background:var(--sky-soft); color:var(--navy)">Not scored yet</div>
+          </div>
+        </div>
+        <div id="tratQuestions" class="space-y-4"></div>
+        <div class="flex gap-3 mt-5">
+          <button id="btnSubmitTrat" onclick="app.submitTrat()" class="px-5 py-2.5 rounded-lg text-white font-bold" style="background:var(--navy)"><i class="fa-solid fa-calculator me-1"></i> Submit Team</button>
+          <button onclick="app.resetModule('trat')" class="px-4 py-2.5 rounded-lg font-bold border" style="border-color:var(--rose); color:var(--rose)">Reset This Team</button>
+          <button onclick="app.resetAllTeams()" class="px-4 py-2.5 rounded-lg font-bold border" style="border-color:var(--slate-400,#94a3b8); color:#64748b">Reset All 5 Teams</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THEORY (Pre/Post) TAB ============ -->
+  <section id="tab-theory" class="tab-panel hidden space-y-4">
+    <div id="theoryLockedBanner" class="locked-banner hidden">
+      <p class="font-bold"><i class="fa-solid fa-lock me-1"></i> This section is locked</p>
+      <p class="text-sm mt-1 mb-3">Ask your instructor for the Theory Test access code, then enter it below.</p>
+      <div class="flex gap-2 flex-wrap">
+        <input id="sectionCodeInput-theory" type="text" placeholder="Enter code" class="border rounded-lg px-3 py-2 text-sm" style="border-color:var(--line)" onkeydown="if(event.key==='Enter') app.unlockWithCode('theory')">
+        <button onclick="app.unlockWithCode('theory')" class="px-4 py-2 rounded-lg text-white font-bold text-sm" style="background:var(--navy)">Unlock</button>
+      </div>
+      <p id="sectionCodeError-theory" class="text-sm mt-2 hidden" style="color:var(--rose)">Incorrect code. Try again.</p>
+    </div>
+    <div id="theoryContent">
+    <div id="theorySurveyCard" class="card p-5 hidden" dir="rtl">
+      <h2 class="section-title text-lg mb-1"><i class="fa-solid fa-clipboard-list me-1"></i> استبيان أولي (قبل بدء الاختبار القبلي)</h2>
+      <p class="text-sm text-slate-500 mb-4">برجاء تعبئة البيانات التالية مرة واحدة قبل بدء الاختبار القبلي. لا توجد إجابات صحيحة أو خاطئة في هذا الجزء.</p>
+
+      <h3 class="font-bold text-sm mb-2" style="color:var(--navy)">أولاً: البيانات الشخصية</h3>
+      <div class="grid sm:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="block text-sm font-bold mb-1">1. العمر</label>
+          <div class="space-y-1" data-survey-radio="age">
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_age" value="21"> 21 سنة</label>
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_age" value="22"> 22 سنة</label>
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_age" value="23"> 23 سنة</label>
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_age" value="gt23"> أكبر من 23 سنة</label>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1">2. النوع</label>
+          <div class="space-y-1" data-survey-radio="gender">
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_gender" value="male"> ذكر</label>
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_gender" value="female"> أنثى</label>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1">3. محل الإقامة</label>
+          <div class="space-y-1" data-survey-radio="residence">
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_residence" value="urban"> حضر (مدينة)</label>
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_residence" value="rural"> ريف (قرية)</label>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="font-bold text-sm mb-2" style="color:var(--navy)">ثانياً: الخبرة الأكاديمية والتكنولوجية</h3>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-bold mb-1">امتلك الأجهزة الرقمية التالية (يمكن اختيار أكثر من إجابة)</label>
+          <div class="space-y-1" data-survey-checkbox="devices">
+            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="s_devices" value="smartphone"> هاتف ذكي (Smartphone)</label>
+            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="s_devices" value="laptop"> لاب توب / كمبيوتر شخصي</label>
+            <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="s_devices" value="tablet"> تابلت / آيباد</label>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1">مدى استقرار اتصالك بشبكة الإنترنت</label>
+          <div class="space-y-1" data-survey-radio="internet">
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_internet" value="stable"> مستقر تماماً</label>
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_internet" value="somewhat"> مستقر إلى حد ما</label>
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_internet" value="unstable"> غير مستقر / متقطع</label>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1">معدل استخدامك لمنصات التعلم الإلكتروني (مثل Google Classroom)</label>
+          <div class="space-y-1" data-survey-radio="lmsUse">
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_lmsUse" value="daily"> يومياً</label>
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_lmsUse" value="weekly"> أسبوعياً</label>
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_lmsUse" value="rarely"> نادراً</label>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1">هل سبق لك التعامل مع استراتيجية التعلم القائم على الفريق (TBL)؟</label>
+          <div class="space-y-1" data-survey-radio="hadTBL">
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_hadTBL" value="yes"> نعم</label>
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_hadTBL" value="no"> لا</label>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1">تقييمك لمستواك في الثقافة الرقمية (Digital Literacy)</label>
+          <div class="space-y-1" data-survey-radio="digitalLiteracy">
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_digitalLiteracy" value="advanced"> متقدم (أستطيع حل المشكلات التقنية واستخدام برامج معقدة)</label>
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_digitalLiteracy" value="intermediate"> متوسط (أجيد التعامل مع معظم التطبيقات والمنصات التعليمية)</label>
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_digitalLiteracy" value="beginner"> مبتدئ (أستخدم الإنترنت للتواصل الاجتماعي والبريد فقط)</label>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1">معدل استخدامك لبرامج الاجتماعات الافتراضية (Zoom / Google Meet) للتعلم</label>
+          <div class="space-y-1" data-survey-radio="meetingUse">
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_meetingUse" value="often"> بشكل متكرر</label>
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_meetingUse" value="sometimes"> أحياناً</label>
+            <label class="flex items-center gap-2 text-sm"><input type="radio" name="s_meetingUse" value="rarely"> نادراً</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-5">
+      <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+        <h2 class="section-title text-lg"><i class="fa-solid fa-book-medical me-1"></i> Pre/Post Theory Test</h2>
+        <div class="flex items-center gap-2">
+          <div id="theoryTimerBadge" class="badge mono" style="background:var(--sky-soft); color:var(--navy)"></div>
+          <div id="theoryScoreBadge" class="badge" style="background:var(--sky-soft); color:var(--navy)">Not submitted yet</div>
+        </div>
+      </div>
+      <p class="text-sm text-slate-500 mb-4">
+        This test is automatically recorded under the test phase selected above in Session Info
+        (<span id="theoryPhaseLabel" class="font-bold" style="color:var(--navy)"></span>). Scenario-based questions — read each vignette carefully before answering.
+      </p>
+      <div id="theoryQuestions" class="space-y-4"></div>
+      <div class="flex gap-3 mt-5">
+        <button id="btnGradeTheory" onclick="app.gradeSingle('theory')" class="px-5 py-2.5 rounded-lg text-white font-bold" style="background:var(--navy)"><i class="fa-solid fa-calculator me-1"></i> Submit Answers</button>
+        <button onclick="app.resetModule('theory')" class="px-4 py-2.5 rounded-lg font-bold border" style="border-color:var(--rose); color:var(--rose)">Reset</button>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- ============ OSCE TAB ============ -->
+  <section id="tab-osce" class="tab-panel hidden space-y-4">
+    <div id="osceGateBanner" class="locked-banner hidden">
+      <p class="font-bold"><i class="fa-solid fa-hourglass-half me-1"></i> Complete the Pre-Test first</p>
+      <p class="text-sm mt-1">Finish and submit the Pre-Test in the "Pre/Post Theory Test" tab before this section becomes available.</p>
+    </div>
+    <div id="osceLockedBanner" class="locked-banner hidden">
+      <p class="font-bold"><i class="fa-solid fa-lock me-1"></i> This section is locked</p>
+      <p class="text-sm mt-1 mb-3">Ask your instructor for the OSCE access code, then enter it below.</p>
+      <div class="flex gap-2 flex-wrap">
+        <input id="sectionCodeInput-osce" type="text" placeholder="Enter code" class="border rounded-lg px-3 py-2 text-sm" style="border-color:var(--line)" onkeydown="if(event.key==='Enter') app.unlockWithCode('osce')">
+        <button onclick="app.unlockWithCode('osce')" class="px-4 py-2 rounded-lg text-white font-bold text-sm" style="background:var(--navy)">Unlock</button>
+      </div>
+      <p id="sectionCodeError-osce" class="text-sm mt-2 hidden" style="color:var(--rose)">Incorrect code. Try again.</p>
+    </div>
+    <div id="osceContent" class="space-y-4">
+      <div class="card p-2 flex gap-1 overflow-x-auto">
+        <button data-osce="choking_adult" class="osce-sub-btn tab-btn px-4 py-2 rounded-lg font-bold text-sm active">Adult & Child Choking</button>
+        <button data-osce="cpr_adult" class="osce-sub-btn tab-btn px-4 py-2 rounded-lg font-bold text-sm">Adult CPR</button>
+        <button data-osce="choking_infant" class="osce-sub-btn tab-btn px-4 py-2 rounded-lg font-bold text-sm">Infant Choking</button>
+        <button data-osce="cpr_infant" class="osce-sub-btn tab-btn px-4 py-2 rounded-lg font-bold text-sm">Infant CPR</button>
+      </div>
+      <div class="card p-5">
+        <div class="flex items-center justify-between flex-wrap gap-2 mb-1">
+          <h2 id="osceTitle" class="section-title text-lg"></h2>
+          <div id="osceScoreBadge" class="badge" style="background:var(--sky-soft); color:var(--navy)"></div>
+        </div>
+        <p class="text-xs text-slate-500 mb-4 mono">0 = Not performed / critical error &nbsp;·&nbsp; 1 = Partially performed &nbsp;·&nbsp; 2 = Fully mastered performance</p>
+        <div id="osceSteps" class="space-y-6"></div>
+        <div class="flex gap-3 mt-5">
+          <button onclick="app.resetOSCE()" class="px-4 py-2.5 rounded-lg font-bold border" style="border-color:var(--rose); color:var(--rose)">Reset This Protocol</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DASHBOARD TAB ============ -->
+  <section id="tab-dashboard" class="tab-panel hidden space-y-4">
+    <div class="grid md:grid-cols-4 gap-4">
+      <div class="card p-4 text-center">
+        <p class="text-xs text-slate-500 font-bold mb-1">Total Saved Sessions</p>
+        <p id="dashTotalSessions" class="text-3xl font-black" style="color:var(--navy)">0</p>
+      </div>
+      <div class="card p-4 text-center">
+        <p class="text-xs text-slate-500 font-bold mb-1">Avg. Theory Score (All Sessions)</p>
+        <p id="dashAvgTheory" class="text-3xl font-black" style="color:var(--sky)">—</p>
+      </div>
+      <div class="card p-4 text-center">
+        <p class="text-xs text-slate-500 font-bold mb-1">Avg. OSCE Practical Score</p>
+        <p id="dashAvgOsce" class="text-3xl font-black" style="color:var(--emerald)">—</p>
+      </div>
+      <div class="card p-4 text-center">
+        <p class="text-xs text-slate-500 font-bold mb-1">Most Common Competency Level</p>
+        <p id="dashTopLevel" class="text-xl font-black mt-1" style="color:var(--navy)">—</p>
+      </div>
+    </div>
+
+    <div class="card p-5">
+      <h3 class="section-title mb-4"><i class="fa-solid fa-scale-balanced me-1"></i> Performance by Test Phase (Pre vs. Post vs. Follow-Up)</h3>
+      <div id="compareChart" class="space-y-4"></div>
+    </div>
+
+    <div class="card p-5">
+      <h3 class="section-title mb-4"><i class="fa-solid fa-table-list me-1"></i> Session Records</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left">
+          <thead>
+            <tr class="border-b" style="border-color:var(--line)">
+              <th class="p-2">Student</th><th class="p-2">Phase</th>
+              <th class="p-2">iRAT</th><th class="p-2">tRAT (Team)</th><th class="p-2">Theory</th><th class="p-2">Practical</th>
+              <th class="p-2">Competency</th><th class="p-2">Date</th><th class="p-2"></th>
+            </tr>
+          </thead>
+          <tbody id="recordsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EXPORT TAB ============ -->
+  <section id="tab-export" class="tab-panel hidden space-y-4">
+    <div class="card p-5">
+      <h2 class="section-title text-lg mb-2"><i class="fa-solid fa-file-export me-1"></i> Export Data</h2>
+      <p class="text-sm text-slate-500 mb-4">Export all saved sessions (theory and practical) as a CSV file compatible with Excel, with full Arabic/English UTF-8 BOM support.</p>
+      <button onclick="app.exportCSV()" class="px-5 py-3 rounded-lg text-white font-bold flex items-center gap-2" style="background:var(--navy)">
+        <i class="fa-solid fa-file-csv"></i> Export All Records (CSV / Excel)
+      </button>
+    </div>
+    <div class="card p-5">
+      <h2 class="section-title text-lg mb-2"><i class="fa-solid fa-print me-1"></i> Official OSCE Scorecard</h2>
+      <p class="text-sm text-slate-500 mb-4">Generate a printable scorecard for the current student session (fill in Session Info first).</p>
+      <button onclick="app.openScorecard()" class="px-5 py-3 rounded-lg font-bold border flex items-center gap-2" style="border-color:var(--navy); color:var(--navy)">
+        <i class="fa-solid fa-eye"></i> Preview & Print Scorecard
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ SCORECARD MODAL ============ -->
+<div id="scorecardModal" class="fixed inset-0 modal-bg z-50 hidden items-center justify-center p-4">
+  <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
+    <div id="printArea"></div>
+    <div class="flex gap-3 mt-5 no-print">
+      <button onclick="window.print()" class="px-5 py-2.5 rounded-lg text-white font-bold flex items-center gap-2" style="background:var(--navy)"><i class="fa-solid fa-print"></i> Print</button>
+      <button onclick="document.getElementById('scorecardModal').classList.add('hidden')" class="px-5 py-2.5 rounded-lg font-bold border">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ INSTRUCTOR CONTROLS MODAL ============ -->
+<div id="instructorModal" class="fixed inset-0 modal-bg z-50 hidden items-center justify-center p-4">
+  <div class="bg-white rounded-2xl max-w-md w-full p-6">
+    <div id="pinGate">
+      <h3 class="section-title text-lg mb-1"><i class="fa-solid fa-user-shield me-1"></i> Instructor Access</h3>
+      <p class="text-sm text-slate-500 mb-4">Enter the instructor PIN to open the section controls.</p>
+      <input id="pinInput" type="password" inputmode="numeric" placeholder="PIN" class="w-full border rounded-lg px-3 py-2 mb-3 tracking-widest text-center text-lg" style="border-color:var(--line)">
+      <p id="pinError" class="text-sm mb-3 hidden" style="color:var(--rose)">Incorrect PIN. Try again.</p>
+      <div class="flex gap-3">
+        <button id="btnPinSubmit" class="flex-1 px-4 py-2.5 rounded-lg text-white font-bold" style="background:var(--navy)">Unlock</button>
+        <button onclick="pendingQuickToggleKey=null; document.getElementById('instructorModal').classList.add('hidden')" class="px-4 py-2.5 rounded-lg font-bold border">Cancel</button>
+      </div>
+      <p class="text-xs text-slate-400 mt-4">Default PIN is <b>0000</b> on first use — change it below once you're in.</p>
+    </div>
+    <div id="lockControls" class="hidden">
+      <h3 class="section-title text-lg mb-1"><i class="fa-solid fa-unlock me-1"></i> Section Controls</h3>
+      <p class="text-sm text-slate-500 mb-4">Toggle each section on to reveal it to students, or off to hide it.</p>
+      <div class="space-y-2 mb-4" id="lockToggleList"></div>
+      <div class="flex gap-2 mb-5">
+        <button onclick="app.unlockAll()" class="flex-1 px-3 py-2 rounded-lg font-bold border text-sm" style="border-color:var(--emerald); color:var(--emerald)">Unlock All</button>
+        <button onclick="app.lockAll()" class="flex-1 px-3 py-2 rounded-lg font-bold border text-sm" style="border-color:var(--rose); color:var(--rose)">Lock All</button>
+      </div>
+      <div class="border-t pt-4 mb-5" style="border-color:var(--line)">
+        <div class="flex items-center justify-between p-3 rounded-xl" id="resultsToggleRow" style="background:var(--rose-soft)">
+          <span class="font-bold text-sm flex items-center gap-2" style="color:var(--navy)"><i class="fa-solid fa-eye-slash"></i> Show scores &amp; correct answers to students</span>
+          <label class="switch">
+            <input type="checkbox" id="resultsToggleInput" onchange="app.toggleResultsVisible()">
+            <span class="switch-track"></span>
+          </label>
+        </div>
+        <p class="text-xs text-slate-400 mt-2">Off by default — students only see "Submitted", never their score or which answers were right or wrong. Turn this on afterwards for review.</p>
+      </div>
+      <div class="border-t pt-4 mb-5" style="border-color:var(--line)">
+        <label class="block text-sm font-bold mb-2"><i class="fa-solid fa-stopwatch me-1"></i> Test Time Limits (minutes)</label>
+        <div class="grid grid-cols-3 gap-2 mb-2">
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">iRAT</label>
+            <input id="timerMinutesIrat" type="number" min="1" max="180" class="w-full border rounded-lg px-2 py-1.5 text-sm" style="border-color:var(--line)">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">tRAT</label>
+            <input id="timerMinutesTrat" type="number" min="1" max="180" class="w-full border rounded-lg px-2 py-1.5 text-sm" style="border-color:var(--line)">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-500 mb-1">Theory</label>
+            <input id="timerMinutesTheory" type="number" min="1" max="180" class="w-full border rounded-lg px-2 py-1.5 text-sm" style="border-color:var(--line)">
+          </div>
+        </div>
+        <button onclick="app.saveTimerSettings()" class="w-full px-3 py-2 rounded-lg font-bold border text-sm" style="border-color:var(--navy); color:var(--navy)">Save Time Limits</button>
+        <p class="text-xs text-slate-400 mt-2">Each timer starts the moment a student opens that section, and their answers are auto-submitted when time runs out.</p>
+      </div>
+      <div class="border-t pt-4" style="border-color:var(--line)">
+        <label class="block text-sm font-bold mb-1">Change Instructor PIN</label>
+        <div class="flex gap-2">
+          <input id="newPinInput" type="password" inputmode="numeric" placeholder="New PIN" class="flex-1 border rounded-lg px-3 py-2" style="border-color:var(--line)">
+          <button onclick="app.changePin()" class="px-4 py-2 rounded-lg font-bold border" style="border-color:var(--navy); color:var(--navy)">Save</button>
+        </div>
+      </div>
+      <button onclick="document.getElementById('instructorModal').classList.add('hidden')" class="w-full mt-5 px-4 py-2.5 rounded-lg font-bold border">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 hidden px-5 py-3 rounded-xl text-white font-bold shadow-lg" style="background:var(--navy)"></div>
+
+<script>
+/* ============================= DATA ============================= */
+const RAT_QUESTION_BANK = [
+  {q:"According to this protocol, what is the very first action for a conscious adult who is choking?", opts:["Immediately perform abdominal thrusts","Perform a finger sweep first","Call for emergency services","Give 5 chest thrusts"], correct:2},
+  {q:"When giving the 5 back blows, where exactly should the heel of the hand strike?", opts:["On the lower back near the kidneys","Between the shoulder blades","On the top of the head","On the sternum"], correct:1},
+  {q:"What must the rescuer check after each of the 5 back blows?", opts:["The victim's blood pressure","Nothing — all 5 must be given regardless","Whether the blockage has been removed","The victim's temperature"], correct:2},
+  {q:"If the rescuer is unable to open the casualty's mouth normally to perform a finger sweep, which technique does this protocol specify?", opts:["Forcing the jaw open with a spoon","Skipping the sweep entirely","Using a scissor motion with two fingers","The crossed-finger method"], correct:3},
+  {q:"Once the index finger is inserted along the inside of the cheek to the base of the tongue during a finger sweep, what motion is used to dislodge the foreign body?", opts:["A straight downward push","A hooking motion from the side of the mouth toward the center","A circular stirring motion","A pulling motion straight outward"], correct:1},
+  {q:"Per this protocol, exactly where should the fist be positioned when performing abdominal thrusts (Heimlich maneuver)?", opts:["Directly on the sternum","At the level of the ribs on the left side","Exactly on the navel itself","Slightly above the navel but well below the tip of the breastbone"], correct:3},
+  {q:"According to this protocol, in which situation(s) is the chest thrust specifically indicated instead of the abdominal thrust?", opts:["Only for infants under 1 year of age","Whenever the rescuer simply prefers it","When the casualty is pregnant, has an abdominal wound, or is too large to wrap your arms around","Only when EMS has not yet been called"], correct:2},
+  {q:"When performing chest thrusts on a casualty who is sitting or standing, where should the thumb side of the fist be placed?", opts:["Directly over the navel","In the middle of the breastbone, avoiding its tip and the rib margins","On the lower ribs","At the base of the neck"], correct:1},
+  {q:"Which of the following is explicitly listed in this protocol as a cause of choking?", opts:["High blood pressure","Regurgitation of stomach contents blocking the airway","Excessive hydration","Low body temperature"], correct:1},
+  {q:"Which of the following is explicitly listed in this protocol as a sign or symptom of choking?", opts:["Increased appetite","Slow, deep, regular breathing","Making a whistling or crowing noise","Improved ability to speak clearly"], correct:2},
+  {q:"According to this protocol, what should be done if 5 abdominal thrusts fail to dislodge the object?", opts:["Stop all first aid and wait for EMS only","Repeat the five-and-five cycle of back blows and abdominal thrusts","Immediately begin CPR regardless of responsiveness","Perform 20 additional abdominal thrusts in a row"], correct:1},
+  {q:"What does this protocol instruct if the casualty becomes unresponsive while performing chest or abdominal thrusts?", opts:["Always perform 5 more thrusts regardless of outcome","Only monitor breathing with no further action","Call for help and proceed to open the airway and perform rescue breathing","Immediately discharge the casualty with no follow-up"], correct:2},
+  {q:"Per the causes listed in this protocol, why can eating or drinking too quickly lead to choking?", opts:["It lowers blood pressure suddenly","It increases the risk of aspirating a foreign object into the airway","It causes immediate unconsciousness","It has no relationship to airway obstruction"], correct:1},
+  {q:"According to the causes listed in this protocol, how can a head or facial injury lead to choking?", opts:["It directly paralyzes the diaphragm","It always causes immediate cardiac arrest","Blood clots may form and block the airway","It has no connection to airway obstruction"], correct:2},
+  {q:"In this protocol's sequence for a conscious choking adult, what is the correct order of steps once emergency services have been called?", opts:["Abdominal thrusts, then back blows, then finger sweep","Finger sweep, then back blows, then abdominal thrusts","Chest thrusts only, skipping back blows and the finger sweep","Back blows, then finger sweep, then abdominal thrusts (or chest thrusts in specific cases)"], correct:3},
+];
+
+/* Pre-Test theory bank — scenario-based, application-level questions (distinct from iRAT/tRAT and from the Post-Test bank) */
+const THEORY_PRE_BANK = [
+  {q:"During a community health fair, a middle-aged man at the buffet suddenly stands, grips his throat with both hands, and is coughing forcefully and loudly, though his face is not yet discolored. As the nurse on duty, what is your most appropriate initial action?", opts:["Immediately begin abdominal thrusts because any choking event requires them right away","Stay close, encourage him to keep coughing, and do not intervene physically unless the cough becomes weak or silent","Perform a blind finger sweep to locate and remove the object before it descends further","Lower him to the floor immediately and start CPR as a precaution"], correct:1},
+  {q:"You are responding to a choking emergency in a woman who is eight months pregnant. She is conscious but can no longer cough or speak. Why is the standard abdominal thrust technique modified for this patient, and what should you do instead?", opts:["Back blows alone are substituted, since abdominal thrusts are simply more tiring to perform","Standard abdominal thrusts should be continued unchanged; pregnancy has no effect on technique","Chest thrusts are used instead, because the gravid uterus limits your ability to encircle her abdomen effectively and abdominal compression risks fetal injury","She should be placed supine immediately and given rescue breaths only, skipping thrusts entirely"], correct:2},
+  {q:"While delivering abdominal thrusts to a choking adult, you feel him suddenly go limp in your arms. Considering both his safety and the change in his condition, what should your very next actions be?", opts:["Continue abdominal thrusts on the way down and only stop once he reaches the floor","Lower him to the floor, then immediately begin chest compressions before checking anything else","Leave him where he fell while you go call for help, since a limp victim can be moved later","Lower him carefully to a supine position, activate the emergency response system if not already done, and begin the unconscious airway obstruction sequence, checking the mouth for a visible object before breaths"], correct:3},
+  {q:"During a two-person CPR effort, you notice that chest compressions are frequently paused for over 20 seconds each time the team stops to check the airway or discuss next steps. What is the most likely consequence of this pattern, and what should the team change?", opts:["Coronary perfusion pressure drops with each pause and must build back up afterward, so the team should minimize interruptions and keep compressions under about 10 seconds between pauses","There is no meaningful consequence, since any compressions are equally effective regardless of pauses","Frequent pauses are required by protocol every 20 seconds to reassess pulse","Pausing longer actually improves compression depth on resumption, so the current pattern should continue"], correct:0},
+  {q:"A 6-month-old infant with a witnessed choking episode has received one full cycle of 5 back slaps and 5 chest thrusts, but the object has not been expelled and the infant remains conscious. What should you do next?", opts:["Switch immediately to abdominal thrusts since the first cycle failed","Stop and wait for EMS to arrive without further intervention","Repeat the cycle of 5 back slaps and 5 chest thrusts, reassessing after each cycle, until the object is expelled or the infant becomes unresponsive","Perform a blind finger sweep before repeating any further cycles"], correct:2},
+  {q:"About two minutes into a resuscitation, you notice the rescuer performing compressions is visibly fatigued and the compression depth appears to be decreasing, even though they insist they can continue. What is the most appropriate team response and why?", opts:["Allow them to continue since switching wastes valuable time","Rotate to a new compressor now, ideally within a few seconds, because fatigue reduces compression quality even before the rescuer feels exhausted","Wait until the rescuer collapses from exhaustion before rotating","Switch to giving only rescue breaths until the original compressor recovers"], correct:1},
+  {q:"During ongoing CPR, the capnography monitor consistently reads 6 mmHg despite compressions being delivered. What does this finding most likely suggest, and what should the team do?", opts:["It indicates excellent compression quality and no changes are needed","It confirms return of spontaneous circulation has occurred","Capnography readings are unrelated to compression quality and can be ignored","It suggests poor compression quality or low perfusion, and the team should reassess and improve compression depth, rate, and recoil"], correct:3},
+  {q:"Midway through a resuscitation, a supraglottic airway is successfully placed. How should the ventilation approach change from this point forward?", opts:["Compressions should continue without pausing, with one breath delivered approximately every 6 seconds","Ventilations should stop entirely since the airway is now secure","The team should pause compressions for every breath, just as before the airway was placed","The compression-to-ventilation ratio should switch to 15:2"], correct:0},
+  {q:"A choking victim becomes unresponsive and pulseless after airway maneuvers fail to dislodge the object, and an AED has just arrived. How should the AED be incorporated into your response?", opts:["The AED should not be used because the arrest was caused by choking, not a cardiac rhythm","Apply the AED as soon as it is available and follow its prompts, alongside continued CPR and attempts to clear the airway","Wait until the airway is fully cleared before considering AED use","The AED should only be applied after 10 minutes of CPR"], correct:1},
+  {q:"A code team includes two trained rescuers managing an infant in cardiac arrest. One asks why the compression-to-ventilation ratio they are using (15:2) differs from the 30:2 ratio a lone rescuer would use with the same infant. What is the correct explanation?", opts:["The ratios are actually identical and the question reflects an error","15:2 is used only for infants older than 12 months","With a second rescuer dedicated to ventilations, breaths can be delivered more frequently, so a 15:2 ratio maintains better oxygenation without unnecessarily interrupting compressions","The ratio changes based on the rescuer's personal preference"], correct:2},
+];
+
+/* Post-Test theory bank — different scenarios from the Pre-Test bank, same competencies and difficulty level */
+const THEORY_POST_BANK = [
+  {q:"A teenage boy at a school cafeteria begins coughing after inhaling a piece of candy. Initially his cough is strong, but over the next 30 seconds it becomes progressively weaker and he starts making a high-pitched noise while inhaling. What does this change indicate, and what should you do?", opts:["Nothing has changed clinically; continue to observe only","The high-pitched noise means the obstruction has already resolved","This indicates the airway obstruction is worsening toward complete obstruction, and abdominal thrusts should begin now","He should be given water to help clear his throat"], correct:2},
+  {q:"An adult patient with a significantly large body habitus is choking and conscious. You find you cannot get your arms around his abdomen to perform standard abdominal thrusts. What is the appropriate modification, and what is the underlying reason for making it?", opts:["Perform the maneuver on the floor instead, with no change to hand position", "Use chest thrusts instead, because the excess abdominal girth makes effective abdominal compression physically difficult or impossible","Skip physical intervention and wait for EMS only","Attempt a blind finger sweep as the primary intervention"], correct:1},
+  {q:"You are alone with a choking adult when he loses consciousness. After lowering him safely to the floor, what should you check before attempting rescue breaths, and why?", opts:["His blood pressure, to determine which technique to use","The mouth, for a visible object, so it can be removed without pushing an unseen object deeper","His pupils, to assess neurological status","Nothing needs to be checked; proceed straight to compressions"], correct:1},
+  {q:"A CPR quality report from a recent resuscitation shows a compression fraction of 45%. What does this number represent, and is it adequate?", opts:["It represents the percentage of compressions performed at the correct depth, and 45% is adequate","It represents the survival probability of the patient and is unrelated to team performance","It represents the percentage of correct hand placement, and no minimum threshold applies","It represents the proportion of total resuscitation time that compressions were actively delivered, and 45% falls below the recommended minimum of at least 60%"], correct:3},
+  {q:"A 4-month-old infant who was choking suddenly becomes unresponsive while you are performing back slaps and chest thrusts. What should your immediate next action be?", opts:["Begin the unresponsive infant sequence: activate the emergency response system if needed, check the mouth before breaths, and start CPR with chest compressions","Continue back slaps and chest thrusts exactly as before, with no change","Perform abdominal thrusts since back slaps failed","Hold the infant upright and shake gently to try to restore responsiveness"], correct:0},
+  {q:"Ten minutes into a resuscitation, the compression rate has crept up to nearly 140 per minute, and the team notes compressions look shallower than earlier in the code. What is the most likely explanation, and what should the team do?", opts:["Faster is always better, so no change is needed","Rescuer fatigue is likely reducing both control and depth as rate increases; the team should rotate compressors and recalibrate to the 100-120/min target with full depth","The monitor is malfunctioning and should be ignored","The team should slow ventilations instead of addressing compressions"], correct:1},
+  {q:"During ongoing CPR, the capnography reading suddenly rises sharply from around 15 mmHg to over 40 mmHg without any change in compression technique. What does this abrupt rise most likely indicate?", opts:["The monitor has failed and should be replaced","The patient has developed a pneumothorax","Possible return of spontaneous circulation (ROSC), prompting an immediate pulse check","Compressions have become too deep and should be reduced"], correct:2},
+  {q:"After an advanced airway is placed during CPR, the respiratory therapist asks how frequently to deliver breaths without pausing compressions. What is the correct guidance?", opts:["One breath approximately every 6 seconds, about 10 breaths per minute","One breath every 2 seconds","One breath every 15 seconds","Breaths should be synchronized precisely with each compression"], correct:0},
+  {q:"A patient found unresponsive and not breathing normally is suspected of opioid overdose. Naloxone is available. How should its administration relate to starting CPR?", opts:["Naloxone should be given first, and CPR should wait until its effect is seen","CPR and rescue breathing should begin without delay, and naloxone can be administered alongside, not in place of, resuscitation efforts","Naloxone replaces the need for chest compressions entirely","CPR should never be performed if opioid overdose is suspected"], correct:1},
+  {q:"You are the second rescuer in a two-provider infant resuscitation. Your partner asks which ventilation ratio to use for two trained rescuers managing an infant, and how it differs from a single-rescuer scenario.", opts:["30:2, identical to the single-rescuer ratio","5:1, used only when two rescuers are present","There is no difference; both use 15:2","15:2, which allows more frequent ventilation support than the 30:2 ratio a lone rescuer would use"], correct:3},
+];
+
+function currentTheoryBank(){
+  return draft.student.phase === 'Pre' ? THEORY_PRE_BANK : THEORY_POST_BANK;
+}
+function theoryBankKeyFor(phase){
+  return phase === 'Pre' ? 'pre' : 'post';
+}
+function bankFor(phaseKey){
+  return phaseKey==='theory' ? currentTheoryBank() : BANKS[phaseKey];
+}
+
+const BANKS = {irat: RAT_QUESTION_BANK, trat: RAT_QUESTION_BANK};
+
+const OSCE_PROTOCOLS = {
+  choking_adult: { title:"Protocol 1: Adult & Child Choking (Over 1 Year)", phases:[
+    {name:"Phase 1: Initial Assessment", scenario:"A 34-year-old man is eating lunch in the cafeteria when he suddenly stands up, grabs his throat, and cannot speak. Bystanders are unsure what is happening.", steps:[
+      "Clearly ask the victim: \"Are you choking?\"",
+      "Assess the strength of the cough (effective vs. ineffective cough)",
+      "Recognize severe airway obstruction and call EMS (911)"]},
+    {name:"Phase 2: Physical Interventions — 2026 Sequence", scenario:"Severe airway obstruction has been confirmed and EMS has been activated. The patient remains conscious and cannot cough effectively.", steps:[
+      "Stand behind the victim, support the chest, and lean them forward",
+      "Deliver 5 firm back blows between the shoulder blades",
+      "Perform 5 abdominal thrusts (Heimlich maneuver)",
+      "Alternate between 5 back blows and 5 abdominal thrusts repeatedly"]},
+    {name:"Phase 3: Transition", scenario:"After several cycles of back blows and abdominal thrusts, the patient suddenly goes limp and stops responding.", steps:[
+      "Transition immediately to CPR once the victim becomes unresponsive"]},
+  ]},
+  cpr_adult: { title:"Protocol 2: Adult CPR", phases:[
+    {name:"Phase 1: Safety & Assessment", scenario:"The man you were rescuing from severe choking has just gone limp and stopped responding, despite repeated cycles of back blows and abdominal thrusts.", steps:[
+      "Ensure scene safety before approaching",
+      "Check the victim's level of responsiveness",
+      "Assess breathing and check the carotid pulse for 5-10 seconds",
+      "Call EMS (911) and request an AED"]},
+    {name:"Phase 2: Compressions", scenario:"You have confirmed this patient — who could not be rescued by back blows and abdominal thrusts — is unresponsive, not breathing normally, and has no pulse. A bystander has called EMS and is bringing an AED.", steps:[
+      "Place the victim supine (on their back)",
+      "Place hands on the lower half of the sternum",
+      "Maintain a compression rate of 100-120 per minute",
+      "Maintain a compression depth of 2 - 2.4 inches with full chest recoil"]},
+    {name:"Phase 3: Airway & Ventilation", scenario:"You are mid-cycle in CPR on this former choking victim. Before each set of breaths, briefly check the mouth in case the obstructing object has become visible.", steps:[
+      "Perform the Head-Tilt Chin-Lift maneuver",
+      "Deliver 2 effective rescue breaths",
+      "Maintain a 30:2 compression-to-ventilation ratio",
+      "Apply the AED protocol as soon as it is available"]},
+  ]},
+  choking_infant: { title:"Protocol 3: Infant Choking (Under 1 Year)", phases:[
+    {name:"Phase 1: Initial Assessment", scenario:"A 7-month-old infant begins coughing weakly while feeding, then stops making any sound and starts turning blue around the lips.", steps:[
+      "Assess responsiveness and airway patency"]},
+    {name:"Phase 2: Physical Interventions", scenario:"You have confirmed the infant cannot cry, cough, or breathe effectively and requires immediate physical intervention.", steps:[
+      "Position the infant face down along your forearm, lower than the chest",
+      "Deliver 5 back blows",
+      "Turn the infant face up, supporting the head and neck",
+      "Perform 5 chest thrusts — no abdominal thrusts",
+      "Alternate between 5 back blows and 5 chest thrusts repeatedly"]},
+    {name:"Phase 3: Transition", scenario:"Despite repeated back blows and chest thrusts, the infant becomes limp and unresponsive in your arms.", steps:[
+      "Call EMS (911) and start infant CPR if the infant becomes unresponsive"]},
+  ]},
+  cpr_infant: { title:"Protocol 4: Infant CPR", phases:[
+    {name:"Phase 1: Safety & Assessment", scenario:"The infant you were rescuing from severe choking has just gone limp and unresponsive, despite repeated cycles of back blows and chest thrusts.", steps:[
+      "Ensure scene safety",
+      "Tap the infant's foot and shout to check responsiveness",
+      "Assess breathing and check the brachial pulse for 5-10 seconds",
+      "Determine call strategy: lone rescuer witnessed vs. unwitnessed (2 minutes of CPR first)"]},
+    {name:"Phase 2: Compressions", scenario:"You have confirmed this infant — who could not be rescued by back blows and chest thrusts — is unresponsive, not breathing normally, and has no palpable pulse.", steps:[
+      "Place the infant supine (on their back)",
+      "Use the Two-Finger Technique for a single rescuer, or Two-Thumb Encircling for two rescuers",
+      "Maintain a compression rate of 100-120 per minute",
+      "Maintain a compression depth of 1.5 inches with full recoil"]},
+    {name:"Phase 3: Airway & Ventilation", scenario:"You are mid-cycle in CPR on this former choking victim. Before each set of breaths, briefly check the infant's mouth in case the obstructing object has become visible.", steps:[
+      "Position the infant in the sniffing position",
+      "Deliver 2 breaths via mouth-to-mouth-and-nose",
+      "Maintain a 30:2 ratio for a single rescuer, or 15:2 for two rescuers",
+      "Use a pediatric AED"]},
+  ]},
+};
+
+const TEAM_COUNT = 5;
+const TEAM_ICONS = ['fa-shield-heart','fa-shield-halved','fa-star','fa-bolt','fa-fire'];
+const PHASE_LABELS = {Pre:'Pre-Test', Post:'Post-Test', Follow:'Follow-Up'};
+const LOCK_KEYS = ['irat','trat','theory','osce'];
+
+// ==== Per-section access codes ====
+// Change these to whatever codes you want to give your students for each section.
+const SECTION_CODES = {
+  irat:   '1111',
+  trat:   '2222',
+  theory: '3333',
+  osce:   '4444'
+};
+
+/* ============================= STATE ============================= */
+const LS_DRAFT = 'aha2026_draft_v4';
+const LS_RECORDS = 'aha2026_records_v4';
+const LS_LOCKS = 'aha2026_locks_v1';
+const LS_PIN = 'aha2026_pin_v1';
+const LS_RESULTS_HIDDEN = 'aha2026_results_hidden_v1';
+const LS_TIMER_MINUTES = 'aha2026_timer_minutes_v1';
+
+function emptyTeamState(){
+  return {attempts:Array(RAT_QUESTION_BANK.length).fill(0), locked:Array(RAT_QUESTION_BANK.length).fill(false), wrongSet:RAT_QUESTION_BANK.map(()=>new Set()), points:Array(RAT_QUESTION_BANK.length).fill(null), submitted:false};
+}
+function emptySurvey(){
+  return {age:'', gender:'', residence:'', devices:[], internet:'', lmsUse:'', hadTBL:'', digitalLiteracy:'', meetingUse:''};
+}
+function emptyDraft(){
+  const teams = {};
+  for(let i=1;i<=TEAM_COUNT;i++) teams[i] = emptyTeamState();
+  return {
+    student:{name:'', evaluator:'', datetime:'', phase:'Pre'},
+    survey: emptySurvey(),
+    preTestCompleted:false,
+    irat:{answers:Array(RAT_QUESTION_BANK.length).fill(null), submitted:false, startedAt:null},
+    trat:{activeTeam:1, teams:teams, startedAt:null, expired:false},
+    theory:{answers:Array(THEORY_PRE_BANK.length).fill(null), submitted:false, startedAt:null, bankKey:'pre'},
+    osce:{
+      choking_adult:{scores:Array(8).fill(null)},
+      cpr_adult:{scores:Array(12).fill(null)},
+      choking_infant:{scores:Array(7).fill(null)},
+      cpr_infant:{scores:Array(12).fill(null)},
+    }
+  };
+}
+
+function loadLocks(){
+  try{
+    const raw = localStorage.getItem(LS_LOCKS);
+    if(!raw){
+      const def = {irat:true, trat:true, theory:true, osce:true}; // true = locked by default
+      localStorage.setItem(LS_LOCKS, JSON.stringify(def));
+      return def;
+    }
+    return JSON.parse(raw);
+  }catch(e){ return {irat:true, trat:true, theory:true, osce:true}; }
+}
+function saveLocks(){ localStorage.setItem(LS_LOCKS, JSON.stringify(locks)); }
+function loadPin(){
+  return localStorage.getItem(LS_PIN) || '0000';
+}
+function savePin(pin){ localStorage.setItem(LS_PIN, pin); }
+function loadResultsHidden(){
+  const raw = localStorage.getItem(LS_RESULTS_HIDDEN);
+  if(raw===null){ localStorage.setItem(LS_RESULTS_HIDDEN, 'true'); return true; } // hidden by default
+  return raw === 'true';
+}
+function saveResultsHidden(){ localStorage.setItem(LS_RESULTS_HIDDEN, String(resultsHidden)); }
+function loadTimerMinutes(){
+  try{
+    const raw = localStorage.getItem(LS_TIMER_MINUTES);
+    if(!raw){
+      const def = {irat:10, trat:20, theory:20};
+      localStorage.setItem(LS_TIMER_MINUTES, JSON.stringify(def));
+      return def;
+    }
+    return JSON.parse(raw);
+  }catch(e){ return {irat:10, trat:20, theory:20}; }
+}
+function saveTimerMinutesToStorage(){ localStorage.setItem(LS_TIMER_MINUTES, JSON.stringify(timerMinutes)); }
+let locks = loadLocks();
+let resultsHidden = loadResultsHidden();
+let timerMinutes = loadTimerMinutes();
+let instructorUnlockedThisSession = false;
+let pendingQuickToggleKey = null;
+
+let draft = loadDraft();
+let records = loadRecords();
+let currentOsce = 'choking_adult';
+
+function loadDraft(){
+  try{
+    const raw = localStorage.getItem(LS_DRAFT);
+    if(!raw) return emptyDraft();
+    const parsed = JSON.parse(raw);
+    Object.keys(parsed.trat.teams).forEach(k=>{
+      parsed.trat.teams[k].wrongSet = parsed.trat.teams[k].wrongSet.map(arr => new Set(arr));
+      if(parsed.trat.teams[k].submitted===undefined) parsed.trat.teams[k].submitted = false;
+    });
+    // backward-compatible defaults for older saved sessions
+    if(parsed.irat.submitted===undefined) parsed.irat.submitted = false;
+    if(parsed.irat.startedAt===undefined) parsed.irat.startedAt = null;
+    if(parsed.trat.startedAt===undefined) parsed.trat.startedAt = null;
+    if(parsed.trat.expired===undefined) parsed.trat.expired = false;
+    if(parsed.theory.submitted===undefined) parsed.theory.submitted = false;
+    if(parsed.theory.startedAt===undefined) parsed.theory.startedAt = null;
+    if(parsed.theory.bankKey===undefined) parsed.theory.bankKey = theoryBankKeyFor(parsed.student.phase);
+    if(!parsed.survey) parsed.survey = emptySurvey();
+    if(parsed.preTestCompleted===undefined) parsed.preTestCompleted = false;
+    return parsed;
+  }catch(e){ return emptyDraft(); }
+}
+function saveDraft(){
+  const toSave = JSON.parse(JSON.stringify(draft, (k,v)=> v instanceof Set ? Array.from(v) : v));
+  localStorage.setItem(LS_DRAFT, JSON.stringify(toSave));
+}
+function loadRecords(){
+  try{ return JSON.parse(localStorage.getItem(LS_RECORDS)) || []; }catch(e){ return []; }
+}
+function saveRecords(){ localStorage.setItem(LS_RECORDS, JSON.stringify(records)); }
+
+/* ============================= UI HELPERS ============================= */
+function toast(msg, color){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = color || 'var(--navy)';
+  t.classList.remove('hidden');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=> t.classList.add('hidden'), 2600);
+}
+
+function competencyInfo(pct){
+  if(pct>=85) return {label:'Competent / Mastered', color:'var(--emerald)', bg:'var(--emerald-soft)'};
+  if(pct>=60) return {label:'Partially Competent', color:'var(--amber)', bg:'var(--amber-soft)'};
+  return {label:'Needs Improvement', color:'var(--rose)', bg:'var(--rose-soft)'};
+}
+
+/* ============================= TIMERS ============================= */
+const TIMER_BADGE_IDS = {irat:'iratTimerBadge', trat:'tratTimerBadge', theory:'theoryTimerBadge'};
+function timerStateFor(key){ return draft[key]; }
+function isTimerDone(key){
+  const st = timerStateFor(key);
+  return key==='trat' ? !!st.expired : !!st.submitted;
+}
+function isSectionAccessible(key){
+  if(key==='theory') return draft.student.phase==='Pre' ? true : !locks.theory;
+  if(!draft.preTestCompleted) return false; // irat/trat/osce gated behind Pre-Test completion
+  return !locks[key];
+}
+function startTimerIfNeeded(key){
+  const st = timerStateFor(key);
+  if(!isSectionAccessible(key)) return;
+  if(isTimerDone(key)) return;
+  if(!st.startedAt){
+    st.startedAt = Date.now();
+    saveDraft();
+  }
+  updateTimerDisplay(key);
+}
+function stopTimer(key){
+  // keep startedAt (so we know it ran) but mark done via submitted/expired flags elsewhere
+  updateTimerDisplay(key);
+}
+function updateTimerDisplay(key){
+  const el = document.getElementById(TIMER_BADGE_IDS[key]);
+  if(!el) return;
+  const st = timerStateFor(key);
+  if(!st.startedAt){
+    el.textContent = `⏱ ${timerMinutes[key]}:00`;
+    el.style.background = 'var(--sky-soft)'; el.style.color = 'var(--navy)';
+    return;
+  }
+  if(isTimerDone(key)){
+    el.textContent = key==='trat' && st.expired ? '⏱ Time up' : '⏱ Submitted';
+    el.style.background = 'var(--sky-soft)'; el.style.color = 'var(--navy)';
+    return;
+  }
+  const totalSec = timerMinutes[key]*60;
+  const elapsed = Math.floor((Date.now() - st.startedAt)/1000);
+  const remaining = Math.max(0, totalSec - elapsed);
+  const mm = String(Math.floor(remaining/60)).padStart(2,'0');
+  const ss = String(remaining%60).padStart(2,'0');
+  el.textContent = `⏱ ${mm}:${ss}`;
+  if(remaining<=60){ el.style.background='var(--rose-soft)'; el.style.color='#8a2e2e'; }
+  else { el.style.background='var(--sky-soft)'; el.style.color='var(--navy)'; }
+  if(remaining<=0){
+    handleTimerExpired(key);
+  }
+}
+function handleTimerExpired(key){
+  const st = timerStateFor(key);
+  if(isTimerDone(key)) return;
+  if(key==='trat'){
+    st.expired = true;
+    saveDraft();
+    renderTrat();
+    toast("Time's up — the tRAT answer sheets are now locked", 'var(--rose)');
+  } else {
+    app.gradeSingle(key, {timeUp:true});
+  }
+  updateTimerDisplay(key);
+}
+setInterval(()=>{
+  ['irat','trat','theory'].forEach(k=>{
+    if(draft[k].startedAt && !isTimerDone(k)) updateTimerDisplay(k);
+  });
+}, 1000);
+
+/* ============================= TAB SWITCHING ============================= */
+document.getElementById('tabNav').addEventListener('click', e=>{
+  const lockIcon = e.target.closest('.lock-icon-btn');
+  if(lockIcon){
+    e.stopPropagation();
+    e.preventDefault();
+    const key = lockIcon.dataset.lockIcon;
+    if(instructorUnlockedThisSession){
+      app.toggleLock(key);
+    } else {
+      pendingQuickToggleKey = key;
+      document.getElementById('instructorModal').classList.remove('hidden');
+      document.getElementById('instructorModal').classList.add('flex');
+      document.getElementById('pinGate').classList.remove('hidden');
+      document.getElementById('lockControls').classList.add('hidden');
+      document.getElementById('pinInput').value = '';
+      document.getElementById('pinError').classList.add('hidden');
+      document.getElementById('pinInput').focus();
+    }
+    return;
+  }
+  const btn = e.target.closest('.tab-btn');
+  if(!btn) return;
+  document.querySelectorAll('#tabNav .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.add('hidden'));
+  document.getElementById('tab-'+btn.dataset.tab).classList.remove('hidden');
+  if(btn.dataset.tab==='dashboard') renderDashboard();
+  if(TIMER_BADGE_IDS[btn.dataset.tab]) startTimerIfNeeded(btn.dataset.tab);
+});
+
+document.querySelectorAll('.osce-sub-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.osce-sub-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentOsce = btn.dataset.osce;
+    renderOSCE();
+  });
+});
+
+/* ============================= INSTRUCTOR LOCK GATING ============================= */
+function refreshLockGating(){
+  LOCK_KEYS.forEach(key=>{
+    const tabBtn = document.querySelector(`[data-tab="${key}"]`);
+    const icon = document.querySelector(`[data-lock-icon="${key}"]`);
+    const gateBanner = document.getElementById(key+'GateBanner');
+    const banner = document.getElementById(key+'LockedBanner');
+    const content = document.getElementById(key+'Content');
+
+    const accessible = isSectionAccessible(key);
+    const pretestGated = !accessible && (['irat','trat','osce'].includes(key)) && !draft.preTestCompleted;
+
+    tabBtn.classList.toggle('locked', !accessible);
+    if(icon){
+      icon.className = 'fa-solid ' + (accessible ? 'fa-lock-open' : 'fa-lock') + ' lock-icon text-xs';
+      icon.style.color = accessible ? 'var(--emerald)' : 'var(--rose)';
+    }
+    if(gateBanner) gateBanner.classList.toggle('hidden', !pretestGated);
+    if(banner) banner.classList.toggle('hidden', accessible || pretestGated);
+    if(content) content.classList.toggle('hidden', !accessible);
+
+    if(!accessible){
+      const activeTab = document.querySelector('#tabNav .tab-btn.active');
+      if(activeTab && activeTab.dataset.tab===key){
+        document.querySelectorAll('#tabNav .tab-btn').forEach(b=>b.classList.remove('active'));
+        document.querySelector('[data-tab="session"]').classList.add('active');
+        document.querySelectorAll('.tab-panel').forEach(p=>p.classList.add('hidden'));
+        document.getElementById('tab-session').classList.remove('hidden');
+      }
+    }
+  });
+  renderStatusChecklist();
+}
+function renderStatusChecklist(){
+  const el = document.getElementById('statusChecklist');
+  if(!el) return;
+  const items = [
+    {key:'irat', label:'iRAT — Individual Test', icon:'fa-user-check'},
+    {key:'trat', label:'tRAT — Team Test', icon:'fa-people-group'},
+    {key:'theory', label:'Pre/Post Theory Test', icon:'fa-book-medical'},
+    {key:'osce', label:'OSCE Practical', icon:'fa-clipboard-check'},
+  ];
+  el.innerHTML = items.map(it=>{
+    const accessible = isSectionAccessible(it.key);
+    const pretestGated = !accessible && ['irat','trat','osce'].includes(it.key) && !draft.preTestCompleted;
+    const label = pretestGated ? 'Complete Pre-Test first' : (accessible ? 'Open' : 'Locked');
+    return `<button onclick="document.querySelector('[data-tab=\\'${it.key}\\']').click()" class="flex items-center gap-3 p-3 rounded-xl text-left" style="background:${accessible?'var(--emerald-soft)':'var(--rose-soft)'}; border:1px solid ${accessible?'var(--emerald)':'var(--rose)'}">
+      <i class="fa-solid ${it.icon}" style="color:${accessible?'var(--emerald)':'var(--rose)'}"></i>
+      <span class="flex-1 font-bold text-sm" style="color:var(--navy)">${it.label}</span>
+      <span class="text-xs font-bold" style="color:${accessible?'var(--emerald)':'var(--rose)'}"><i class="fa-solid ${accessible?'fa-lock-open':'fa-lock'} me-1"></i>${label}</span>
+    </button>`;
+  }).join('');
+}
+function renderLockToggleList(){
+  const labels = {irat:'iRAT — Individual Readiness Test', trat:'tRAT — Team Readiness Test', theory:'Pre/Post Theory Test', osce:'OSCE Practical Checklists'};
+  const icons = {irat:'fa-user-check', trat:'fa-people-group', theory:'fa-book-medical', osce:'fa-clipboard-check'};
+  const list = document.getElementById('lockToggleList');
+  list.innerHTML = LOCK_KEYS.map(key=>{
+    const isLocked = !!locks[key];
+    return `<div class="flex items-center justify-between p-3 rounded-xl" style="background:${isLocked?'var(--rose-soft)':'var(--emerald-soft)'}">
+      <span class="font-bold text-sm flex items-center gap-2" style="color:var(--navy)"><i class="fa-solid ${icons[key]}"></i>${labels[key]}</span>
+      <label class="switch">
+        <input type="checkbox" ${isLocked?'':'checked'} onchange="app.toggleLock('${key}')">
+        <span class="switch-track"></span>
+      </label>
+    </div>`;
+  }).join('');
+  document.getElementById('resultsToggleInput').checked = !resultsHidden;
+  document.getElementById('resultsToggleRow').style.background = resultsHidden ? 'var(--rose-soft)' : 'var(--emerald-soft)';
+  document.getElementById('timerMinutesIrat').value = timerMinutes.irat;
+  document.getElementById('timerMinutesTrat').value = timerMinutes.trat;
+  document.getElementById('timerMinutesTheory').value = timerMinutes.theory;
+}
+
+document.getElementById('btnInstructor').addEventListener('click', ()=>{
+  pendingQuickToggleKey = null;
+  document.getElementById('instructorModal').classList.remove('hidden');
+  document.getElementById('instructorModal').classList.add('flex');
+  if(instructorUnlockedThisSession){
+    document.getElementById('pinGate').classList.add('hidden');
+    document.getElementById('lockControls').classList.remove('hidden');
+    renderLockToggleList();
+  } else {
+    document.getElementById('pinGate').classList.remove('hidden');
+    document.getElementById('lockControls').classList.add('hidden');
+    document.getElementById('pinInput').value = '';
+    document.getElementById('pinError').classList.add('hidden');
+  }
+});
+document.getElementById('btnPinSubmit').addEventListener('click', submitPin);
+document.getElementById('pinInput').addEventListener('keydown', e=>{ if(e.key==='Enter') submitPin(); });
+function submitPin(){
+  const entered = document.getElementById('pinInput').value;
+  if(entered === loadPin()){
+    instructorUnlockedThisSession = true;
+    if(pendingQuickToggleKey){
+      const key = pendingQuickToggleKey;
+      pendingQuickToggleKey = null;
+      app.toggleLock(key);
+      document.getElementById('instructorModal').classList.add('hidden');
+      return;
+    }
+    document.getElementById('pinGate').classList.add('hidden');
+    document.getElementById('lockControls').classList.remove('hidden');
+    renderLockToggleList();
+  } else {
+    document.getElementById('pinError').classList.remove('hidden');
+  }
+}
+
+/* ============================= SESSION FORM ============================= */
+function bindSessionForm(){
+  document.getElementById('f_name').value = draft.student.name;
+  document.getElementById('f_eval').value = draft.student.evaluator;
+  document.getElementById('f_datetime').value = draft.student.datetime;
+  document.getElementById('f_phase').value = draft.student.phase;
+  ['f_name','f_eval','f_datetime','f_phase'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', ()=>{
+      draft.student.name = document.getElementById('f_name').value;
+      draft.student.evaluator = document.getElementById('f_eval').value;
+      draft.student.datetime = document.getElementById('f_datetime').value;
+      const newPhase = document.getElementById('f_phase').value;
+      const newBankKey = theoryBankKeyFor(newPhase);
+      if(newBankKey !== draft.theory.bankKey){
+        // the Pre-Test and Post-Test question sets are different, so switching between
+        // them starts the theory test fresh rather than mixing answers across banks
+        draft.theory.answers = Array((newPhase==='Pre'?THEORY_PRE_BANK:THEORY_POST_BANK).length).fill(null);
+        draft.theory.submitted = false;
+        draft.theory.startedAt = null;
+        draft.theory.bankKey = newBankKey;
+      }
+      draft.student.phase = newPhase;
+      saveDraft();
+      updateTheoryPhaseLabel();
+      renderMCQ('theoryQuestions','theory');
+      renderSurveyBlock();
+      const badge = document.getElementById('theoryScoreBadge');
+      if(!draft.theory.submitted){ badge.textContent = 'Not submitted yet'; badge.style.background='var(--sky-soft)'; badge.style.color='var(--navy)'; }
+      updateTimerDisplay('theory');
+      refreshLockGating();
+    });
+  });
+  refreshLockGating();
+}
+function updateTheoryPhaseLabel(){
+  document.getElementById('theoryPhaseLabel').textContent = PHASE_LABELS[draft.student.phase];
+}
+
+/* ============================= PRE-TEST SURVEY ============================= */
+const SURVEY_RADIO_FIELDS = ['age','gender','residence','internet','lmsUse','hadTBL','digitalLiteracy','meetingUse'];
+function bindSurveyForm(){
+  SURVEY_RADIO_FIELDS.forEach(field=>{
+    document.querySelectorAll(`input[name="s_${field}"]`).forEach(input=>{
+      input.addEventListener('change', ()=>{
+        draft.survey[field] = input.value;
+        saveDraft();
+      });
+    });
+  });
+  document.querySelectorAll('input[name="s_devices"]').forEach(input=>{
+    input.addEventListener('change', ()=>{
+      const set = new Set(draft.survey.devices);
+      if(input.checked) set.add(input.value); else set.delete(input.value);
+      draft.survey.devices = Array.from(set);
+      saveDraft();
+    });
+  });
+}
+function renderSurveyBlock(){
+  const card = document.getElementById('theorySurveyCard');
+  if(!card) return;
+  card.classList.toggle('hidden', draft.student.phase !== 'Pre');
+  SURVEY_RADIO_FIELDS.forEach(field=>{
+    const val = draft.survey[field];
+    if(val){
+      const input = document.querySelector(`input[name="s_${field}"][value="${val}"]`);
+      if(input) input.checked = true;
+    }
+  });
+  document.querySelectorAll('input[name="s_devices"]').forEach(input=>{
+    input.checked = draft.survey.devices.includes(input.value);
+  });
+}
+
+document.getElementById('btnNewSession').addEventListener('click', ()=>{
+  if(!confirm('All answers and scores in this session will be reset. Continue?')) return;
+  draft = emptyDraft();
+  saveDraft();
+  renderAll();
+  toast('New session started', 'var(--navy)');
+});
+
+document.getElementById('btnFinalize').addEventListener('click', ()=>{
+  if(!draft.student.name){ toast('Please enter the student name first', 'var(--rose)'); return; }
+  const rec = buildRecord();
+  records.push(rec);
+  saveRecords();
+  document.getElementById('sessionStatus').innerHTML = `<span style="color:var(--emerald)"><i class="fa-solid fa-circle-check"></i> Session saved successfully to the records (${new Date().toLocaleString('en-US')})</span>`;
+  toast('Full session saved to records', 'var(--emerald)');
+});
+
+/* ============================= SCORING ============================= */
+function scoreOfAnswers(answers, bank){
+  let correct=0;
+  answers.forEach((a,i)=>{ if(a===bank[i].correct) correct++; });
+  return {correct, total:bank.length, pct: Math.round(correct/bank.length*100)};
+}
+function scoreOfTratTeam(teamNum){
+  const team = draft.trat.teams[teamNum];
+  const pts = team.points.filter(p=>p!==null);
+  const sum = pts.reduce((a,b)=>a+b,0);
+  const max = RAT_QUESTION_BANK.length*4;
+  const answered = pts.length;
+  const pct = answered>0 ? Math.round(sum/(answered*4)*100) : 0;
+  return {sum, max, answered, pct};
+}
+function scoreOfOsce(key){
+  const arr = draft.osce[key].scores;
+  const answered = arr.filter(s=>s!==null);
+  const sum = answered.reduce((a,b)=>a+b,0);
+  const max = arr.length*2;
+  const pct = answered.length>0 ? Math.round(sum/(arr.length*2)*100) : 0;
+  return {sum, max, pct, answeredCount:answered.length, totalSteps:arr.length};
+}
+function overallOsceAvgPct(){
+  const keys = Object.keys(OSCE_PROTOCOLS);
+  const pcts = keys.map(k=>scoreOfOsce(k).pct);
+  return Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length);
+}
+
+/* ============================= RENDER: iRAT & THEORY (MCQ) ============================= */
+function renderMCQ(containerId, phaseKey){
+  const bank = bankFor(phaseKey);
+  const submitted = !!draft[phaseKey].submitted;
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  bank.forEach((q, qi)=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'p-4 rounded-xl border';
+    wrap.style.borderColor = 'var(--line)';
+    wrap.innerHTML = `<p class="font-bold mb-3">${qi+1}. ${q.q}</p>
+      <div class="grid sm:grid-cols-2 gap-2" data-q="${qi}"></div>`;
+    const optsWrap = wrap.querySelector('[data-q]');
+    q.opts.forEach((opt, oi)=>{
+      const b = document.createElement('button');
+      b.className = 'opt-btn text-left px-3 py-2 text-sm' + (submitted ? ' disabled' : '');
+      b.textContent = String.fromCharCode(65+oi) + ') ' + opt;
+      if(draft[phaseKey].answers[qi]===oi) b.classList.add('selected');
+      if(!submitted){
+        b.addEventListener('click', ()=>{
+          draft[phaseKey].answers[qi] = oi;
+          saveDraft();
+          renderMCQ(containerId, phaseKey);
+        });
+      }
+      optsWrap.appendChild(b);
+    });
+    container.appendChild(wrap);
+  });
+}
+
+/* ============================= RENDER: tRAT (5 teams, IF-AT scratch) ============================= */
+function renderTeamSelector(){
+  const wrap = document.getElementById('teamSelector');
+  wrap.innerHTML = '';
+  for(let i=1;i<=TEAM_COUNT;i++){
+    const s = scoreOfTratTeam(i);
+    const submitted = !!draft.trat.teams[i].submitted;
+    const btn = document.createElement('button');
+    btn.className = 'team-btn' + (draft.trat.activeTeam===i ? ' active' : '');
+    btn.innerHTML = `<div class="team-icon"><i class="fa-solid ${TEAM_ICONS[i-1]}"></i></div>
+      <div class="font-bold text-sm mt-1">Team ${i}</div>
+      <div class="team-score">${s.answered>0 ? s.sum+'/'+s.max+' pts' : 'not started'}</div>
+      ${submitted ? '<div class="text-xs font-bold" style="color:var(--emerald)"><i class="fa-solid fa-check"></i> Submitted</div>' : ''}`;
+    btn.addEventListener('click', ()=>{
+      draft.trat.activeTeam = i;
+      saveDraft();
+      renderTrat();
+    });
+    wrap.appendChild(btn);
+  }
+}
+function renderLeaderboard(){
+  const rows = [];
+  for(let i=1;i<=TEAM_COUNT;i++){
+    const s = scoreOfTratTeam(i);
+    rows.push({team:i, submitted:!!draft.trat.teams[i].submitted, ...s});
+  }
+  rows.sort((a,b)=> b.sum - a.sum);
+  const board = document.getElementById('teamLeaderboard');
+  board.innerHTML = rows.map((r,idx)=>{
+    const medalColor = idx===0? 'var(--emerald)' : idx===1? 'var(--sky)' : idx===2? 'var(--amber)' : '#94a3b8';
+    return `<div class="flex items-center gap-3 p-2 rounded-lg" style="background:#f7fafc">
+      <span class="w-6 text-center font-black" style="color:${medalColor}">#${idx+1}</span>
+      <i class="fa-solid ${TEAM_ICONS[r.team-1]}" style="color:var(--violet)"></i>
+      <span class="font-bold flex-1">Team ${r.team} ${r.submitted?'<i class="fa-solid fa-check-circle" style="color:var(--emerald)"></i>':''}</span>
+      <span class="mono text-sm font-bold">${r.sum} / ${r.max} pts (${r.pct}%)</span>
+    </div>`;
+  }).join('');
+}
+function renderTrat(){
+  renderTeamSelector();
+  renderLeaderboard();
+  const active = draft.trat.activeTeam;
+  document.getElementById('tratActiveTeamTitle').innerHTML = `<i class="fa-solid ${TEAM_ICONS[active-1]} me-1"></i> Team ${active} — Answer Sheet`;
+  const team = draft.trat.teams[active];
+  const expired = !!draft.trat.expired;
+  const submitted = !!team.submitted;
+  const container = document.getElementById('tratQuestions');
+  container.innerHTML = '';
+  RAT_QUESTION_BANK.forEach((q, qi)=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'p-4 rounded-xl border';
+    wrap.style.borderColor = 'var(--line)';
+    const locked = team.locked[qi];
+    const pts = team.points[qi];
+    wrap.innerHTML = `<div class="flex items-center justify-between mb-3">
+        <p class="font-bold">${qi+1}. ${q.q}</p>
+        <span class="text-xs mono font-bold" style="color:var(--sky)">${locked? 'Points: '+pts+'/4' : 'Attempt #'+(team.attempts[qi]+1)}</span>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-2" data-q="${qi}"></div>`;
+    const optsWrap = wrap.querySelector('[data-q]');
+    q.opts.forEach((opt, oi)=>{
+      const b = document.createElement('button');
+      const isWrongMarked = team.wrongSet[qi].has(oi);
+      b.className = 'opt-btn text-left px-3 py-2 text-sm' + (isWrongMarked? ' wrong':'') + ((locked||expired||submitted)?' disabled':'');
+      b.textContent = String.fromCharCode(65+oi) + ') ' + opt;
+      if(locked && oi===q.correct) b.classList.add('correct');
+      if(!locked && !expired && !submitted && !isWrongMarked){
+        b.addEventListener('click', ()=> tratPick(qi, oi));
+      }
+      optsWrap.appendChild(b);
+    });
+    container.appendChild(wrap);
+  });
+  const s = scoreOfTratTeam(active);
+  const badge = document.getElementById('tratScoreBadge');
+  if(submitted){
+    badge.textContent = `✓ Submitted — ${s.sum} / ${s.max} points (${s.pct}%)`;
+    badge.style.background = 'var(--emerald-soft)'; badge.style.color = 'var(--emerald)';
+  } else {
+    badge.textContent = s.answered>0 ? `${s.sum} / ${s.max} points (${s.pct}%)` : 'Not started yet';
+    badge.style.background = 'var(--sky-soft)'; badge.style.color = 'var(--navy)';
+  }
+  const btnSubmit = document.getElementById('btnSubmitTrat');
+  if(btnSubmit){
+    btnSubmit.disabled = submitted;
+    btnSubmit.innerHTML = submitted ? '<i class="fa-solid fa-check me-1"></i> Team Submitted' : '<i class="fa-solid fa-calculator me-1"></i> Submit Team';
+    btnSubmit.style.opacity = submitted ? '0.6' : '1';
+    btnSubmit.style.cursor = submitted ? 'default' : 'pointer';
+  }
+  updateTimerDisplay('trat');
+}
+function tratPick(qi, oi){
+  if(draft.trat.expired) return;
+  const team = draft.trat.teams[draft.trat.activeTeam];
+  if(team.submitted) return;
+  if(team.locked[qi]) return;
+  if(oi === RAT_QUESTION_BANK[qi].correct){
+    const attempt = team.attempts[qi];
+    const pointsMap = [4,2,1,0];
+    team.points[qi] = pointsMap[Math.min(attempt,3)];
+    team.locked[qi] = true;
+  } else {
+    team.wrongSet[qi].add(oi);
+    team.attempts[qi]++;
+    if(team.attempts[qi] >= 4){
+      team.points[qi] = 0;
+      team.locked[qi] = true;
+    }
+  }
+  saveDraft();
+  renderTrat();
+}
+
+/* ============================= RENDER: OSCE ============================= */
+function renderOSCE(){
+  const proto = OSCE_PROTOCOLS[currentOsce];
+  document.getElementById('osceTitle').textContent = proto.title;
+  const container = document.getElementById('osceSteps');
+  container.innerHTML = '';
+  let globalIdx = 0;
+  proto.phases.forEach(phase=>{
+    const phaseBlock = document.createElement('div');
+    phaseBlock.innerHTML = `<div class="phase-divider mb-3"></div>
+      <h4 class="font-black text-sm mb-2" style="color:var(--sky)">${phase.name}</h4>
+      <div class="scenario-box mb-3"><i class="fa-solid fa-stethoscope me-1"></i><b>Clinical Scenario:</b> ${phase.scenario}</div>`;
+    const stepsWrap = document.createElement('div');
+    stepsWrap.className = 'space-y-3';
+    phase.steps.forEach(stepText=>{
+      const idx = globalIdx;
+      const row = document.createElement('div');
+      row.className = 'flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-lg';
+      row.style.background = '#f7fafc';
+      const current = draft.osce[currentOsce].scores[idx];
+      row.innerHTML = `<p class="text-sm flex-1"><span class="mono font-bold me-1" style="color:var(--navy)">${idx+1}.</span>${stepText}</p>
+        <div class="flex gap-2 shrink-0" data-step="${idx}">
+          <button data-v="0" class="step-score-btn sc0 px-3 py-1.5 text-xs w-10 ${current===0?'active':''}">0</button>
+          <button data-v="1" class="step-score-btn sc1 px-3 py-1.5 text-xs w-10 ${current===1?'active':''}">1</button>
+          <button data-v="2" class="step-score-btn sc2 px-3 py-1.5 text-xs w-10 ${current===2?'active':''}">2</button>
+        </div>`;
+      row.querySelectorAll('.step-score-btn').forEach(b=>{
+        b.addEventListener('click', ()=>{
+          draft.osce[currentOsce].scores[idx] = Number(b.dataset.v);
+          saveDraft();
+          renderOSCE();
+        });
+      });
+      stepsWrap.appendChild(row);
+      globalIdx++;
+    });
+    phaseBlock.appendChild(stepsWrap);
+    container.appendChild(phaseBlock);
+  });
+  const s = scoreOfOsce(currentOsce);
+  const info = competencyInfo(s.pct);
+  const badge = document.getElementById('osceScoreBadge');
+  badge.textContent = s.answeredCount>0 ? `${s.sum} / ${s.max} (${s.pct}%) — ${info.label}` : 'Not started yet';
+  badge.style.background = s.answeredCount>0 ? info.bg : 'var(--sky-soft)';
+  badge.style.color = s.answeredCount>0 ? info.color : 'var(--navy)';
+}
+
+/* ============================= ACTIONS ============================= */
+const app = {
+  unlockWithCode(key){
+    const input = document.getElementById('sectionCodeInput-'+key);
+    const errorEl = document.getElementById('sectionCodeError-'+key);
+    const entered = (input.value || '').trim();
+    if(entered === SECTION_CODES[key]){
+      locks[key] = false;
+      saveLocks();
+      refreshLockGating();
+      errorEl.classList.add('hidden');
+      input.value = '';
+      toast(key.toUpperCase()+' unlocked', 'var(--emerald)');
+    } else {
+      errorEl.classList.remove('hidden');
+      toast('Incorrect code', 'var(--rose)');
+    }
+  },
+  toggleLock(key){
+    locks[key] = !locks[key];
+    saveLocks();
+    refreshLockGating();
+    renderLockToggleList();
+    toast(`${key.toUpperCase()} is now ${locks[key]?'locked':'unlocked'}`, locks[key]?'var(--rose)':'var(--emerald)');
+  },
+  unlockAll(){
+    LOCK_KEYS.forEach(k=> locks[k]=false);
+    saveLocks(); refreshLockGating(); renderLockToggleList();
+    toast('All sections unlocked', 'var(--emerald)');
+  },
+  lockAll(){
+    LOCK_KEYS.forEach(k=> locks[k]=true);
+    saveLocks(); refreshLockGating(); renderLockToggleList();
+    toast('All sections locked', 'var(--rose)');
+  },
+  changePin(){
+    const val = document.getElementById('newPinInput').value.trim();
+    if(!val){ toast('Enter a new PIN first', 'var(--rose)'); return; }
+    savePin(val);
+    document.getElementById('newPinInput').value = '';
+    toast('Instructor PIN updated', 'var(--emerald)');
+  },
+  saveTimerSettings(){
+    const irat = Math.max(1, parseInt(document.getElementById('timerMinutesIrat').value, 10) || timerMinutes.irat);
+    const trat = Math.max(1, parseInt(document.getElementById('timerMinutesTrat').value, 10) || timerMinutes.trat);
+    const theory = Math.max(1, parseInt(document.getElementById('timerMinutesTheory').value, 10) || timerMinutes.theory);
+    timerMinutes = {irat, trat, theory};
+    saveTimerMinutesToStorage();
+    ['irat','trat','theory'].forEach(k=> updateTimerDisplay(k));
+    toast('Time limits saved', 'var(--emerald)');
+  },
+  toggleResultsVisible(){
+    resultsHidden = !resultsHidden;
+    saveResultsHidden();
+    document.getElementById('resultsToggleRow').style.background = resultsHidden ? 'var(--rose-soft)' : 'var(--emerald-soft)';
+    if(draft.irat.submitted) this.gradeSingle('irat', {silent:true});
+    if(draft.theory.submitted) this.gradeSingle('theory', {silent:true});
+    toast(resultsHidden ? 'Scores are now hidden from students' : 'Scores are now visible to students', resultsHidden ? 'var(--rose)' : 'var(--emerald)');
+  },
+  gradeSingle(phaseKey, opts){
+    opts = opts || {};
+    const s = scoreOfAnswers(draft[phaseKey].answers, bankFor(phaseKey));
+    const badgeId = phaseKey==='irat' ? 'iratScoreBadge' : 'theoryScoreBadge';
+    const badge = document.getElementById(badgeId);
+    draft[phaseKey].submitted = true;
+    if(phaseKey==='theory' && draft.student.phase==='Pre' && !draft.preTestCompleted){
+      draft.preTestCompleted = true;
+      refreshLockGating();
+    }
+    stopTimer(phaseKey);
+    saveDraft();
+    if(resultsHidden){
+      const answeredCount = draft[phaseKey].answers.filter(a=>a!==null).length;
+      badge.textContent = `✓ Submitted (${answeredCount}/${s.total} answered)`;
+      badge.style.background = 'var(--sky-soft)';
+      badge.style.color = 'var(--navy)';
+      if(!opts.silent) toast(opts.timeUp ? "Time's up — your answers have been submitted" : 'Answers submitted', 'var(--navy)');
+    } else {
+      const info = competencyInfo(s.pct);
+      badge.textContent = `${s.correct} / ${s.total} (${s.pct}%) — ${info.label}`;
+      badge.style.background = info.bg;
+      badge.style.color = info.color;
+      if(!opts.silent) toast(opts.timeUp ? "Time's up — answers submitted and scored" : 'Score calculated', 'var(--navy)');
+    }
+    const cid = phaseKey==='irat'?'iratQuestions':'theoryQuestions';
+    renderMCQ(cid, phaseKey);
+  },
+  giveFull(phaseKey){
+    if(phaseKey==='trat'){
+      const active = draft.trat.activeTeam;
+      draft.trat.teams[active].points = RAT_QUESTION_BANK.map(()=>4);
+      draft.trat.teams[active].locked = RAT_QUESTION_BANK.map(()=>true);
+      draft.trat.teams[active].attempts = Array(RAT_QUESTION_BANK.length).fill(0);
+      draft.trat.teams[active].wrongSet = RAT_QUESTION_BANK.map(()=>new Set());
+      saveDraft(); renderTrat();
+    } else {
+      draft[phaseKey].answers = bankFor(phaseKey).map(q=>q.correct);
+      draft[phaseKey].submitted = false;
+      saveDraft();
+      (phaseKey==='irat'?renderMCQ('iratQuestions','irat'):renderMCQ('theoryQuestions','theory'));
+      this.gradeSingle(phaseKey, {silent:true});
+    }
+    toast('Full marks awarded', 'var(--emerald)');
+  },
+  resetModule(phaseKey){
+    if(phaseKey==='trat'){
+      const active = draft.trat.activeTeam;
+      draft.trat.teams[active] = emptyTeamState();
+      draft.trat.startedAt = null;
+      draft.trat.expired = false;
+      saveDraft(); renderTrat(); updateTimerDisplay('trat');
+    } else {
+      draft[phaseKey].answers = Array(bankFor(phaseKey).length).fill(null);
+      draft[phaseKey].submitted = false;
+      draft[phaseKey].startedAt = null;
+      if(phaseKey==='theory' && draft.student.phase==='Pre' && draft.preTestCompleted){
+        draft.preTestCompleted = false;
+        refreshLockGating();
+      }
+      saveDraft();
+      const cid = phaseKey==='irat'?'iratQuestions':'theoryQuestions';
+      renderMCQ(cid, phaseKey);
+      const badgeId = phaseKey==='irat' ? 'iratScoreBadge' : 'theoryScoreBadge';
+      const badge = document.getElementById(badgeId);
+      badge.textContent = 'Not submitted yet';
+      badge.style.background = 'var(--sky-soft)'; badge.style.color = 'var(--navy)';
+      updateTimerDisplay(phaseKey);
+    }
+    toast('Reset complete', 'var(--rose)');
+  },
+  submitTrat(){
+    const active = draft.trat.activeTeam;
+    const team = draft.trat.teams[active];
+    if(team.submitted) return;
+    const unanswered = team.points.filter(p=>p===null).length;
+    if(unanswered>0 && !confirm(`Team ${active} still has ${unanswered} unanswered question(s). Submit anyway?`)) return;
+    team.submitted = true;
+    saveDraft();
+    renderTrat();
+    toast(`Team ${active} submitted`, 'var(--emerald)');
+  },
+  resetAllTeams(){
+    if(!confirm('Reset ALL 5 teams\' tRAT progress? This cannot be undone.')) return;
+    const teams = {};
+    for(let i=1;i<=TEAM_COUNT;i++) teams[i] = emptyTeamState();
+    draft.trat.teams = teams;
+    saveDraft(); renderTrat();
+    toast('All 5 teams have been reset', 'var(--rose)');
+  },
+  giveFullOSCE(){
+    const n = draft.osce[currentOsce].scores.length;
+    draft.osce[currentOsce].scores = Array(n).fill(2);
+    saveDraft(); renderOSCE();
+    toast('Full marks awarded for this protocol', 'var(--emerald)');
+  },
+  resetOSCE(){
+    const n = draft.osce[currentOsce].scores.length;
+    draft.osce[currentOsce].scores = Array(n).fill(null);
+    saveDraft(); renderOSCE();
+    toast('This protocol has been reset', 'var(--rose)');
+  },
+  exportCSV(){
+    if(records.length===0){ toast('No records to export yet', 'var(--rose)'); return; }
+    const headers = ['Student Name','Evaluator','Phase','Date',
+      'Age','Gender','Residence','Devices','Internet Stability','LMS Use Frequency','Prior TBL Experience','Digital Literacy','Virtual Meeting Use',
+      'iRAT %','tRAT Team','tRAT %','Theory %',
+      'Adult Choking %','Adult CPR %','Infant Choking %','Infant CPR %','Practical Avg %','Competency Level'];
+    const rows = records.map(r=>{
+      const sv = r.survey || emptySurvey();
+      return [
+      r.student.name, r.student.evaluator, PHASE_LABELS[r.student.phase]||r.student.phase, r.timestamp,
+      sv.age||'', sv.gender||'', sv.residence||'', (sv.devices||[]).join('; '), sv.internet||'', sv.lmsUse||'', sv.hadTBL||'', sv.digitalLiteracy||'', sv.meetingUse||'',
+      r.irat.pct, r.trat.team||'—', r.trat.pct, r.theory.pct,
+      r.osce.choking_adult.pct, r.osce.cpr_adult.pct, r.osce.choking_infant.pct, r.osce.cpr_infant.pct,
+      r.osceAvg, r.competency
+    ];});
+    let csv = headers.join(',') + '\n' + rows.map(row=>row.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `AHA2026_Records_${Date.now()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('File exported successfully', 'var(--emerald)');
+  },
+  openScorecard(){
+    if(!draft.student.name){ toast('Please enter the student name first', 'var(--rose)'); return; }
+    const iratS = scoreOfAnswers(draft.irat.answers, RAT_QUESTION_BANK);
+    const activeTeam = draft.trat.activeTeam;
+    const tratS = scoreOfTratTeam(activeTeam);
+    const theoryS = scoreOfAnswers(draft.theory.answers, currentTheoryBank());
+    const osceKeys = Object.keys(OSCE_PROTOCOLS);
+    const osceScores = osceKeys.map(k=>({key:k, title:OSCE_PROTOCOLS[k].title, ...scoreOfOsce(k)}));
+    const avgOsce = overallOsceAvgPct();
+    const info = competencyInfo(avgOsce);
+    const phaseMap = PHASE_LABELS;
+    document.getElementById('printArea').innerHTML = `
+      <div style="font-family:'Inter',sans-serif">
+        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--navy);padding-bottom:10px;margin-bottom:14px;">
+          <div>
+            <h2 style="color:var(--navy);font-weight:900;font-size:1.25rem;margin:0">Official OSCE Scorecard</h2>
+            <p style="font-size:.75rem;color:#64748b;margin:2px 0 0">AHA 2026 Guidelines · Choking & CPR Clinical Assessment</p>
+          </div>
+          <i class="fa-solid fa-heart-pulse" style="font-size:1.8rem;color:var(--sky)"></i>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.85rem;margin-bottom:16px">
+          <p><b>Student:</b> ${draft.student.name}</p>
+          <p><b>Evaluator:</b> ${draft.student.evaluator||'—'}</p>
+          <p><b>Phase:</b> ${phaseMap[draft.student.phase]}</p>
+          <p><b>Date:</b> ${draft.student.datetime? new Date(draft.student.datetime).toLocaleString('en-US') : '—'}</p>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:.8rem;margin-bottom:14px">
+          <thead><tr style="background:var(--sky-soft)">
+            <th style="border:1px solid #dbe6ee;padding:6px;text-align:left">Section</th>
+            <th style="border:1px solid #dbe6ee;padding:6px;text-align:left">Score</th>
+          </tr></thead>
+          <tbody>
+            <tr><td style="border:1px solid #dbe6ee;padding:6px">iRAT (Individual)</td><td style="border:1px solid #dbe6ee;padding:6px">${iratS.correct}/${iratS.total} — ${iratS.pct}%</td></tr>
+            <tr><td style="border:1px solid #dbe6ee;padding:6px">tRAT (Team ${activeTeam})</td><td style="border:1px solid #dbe6ee;padding:6px">${tratS.sum}/${tratS.max} — ${tratS.pct}%</td></tr>
+            <tr><td style="border:1px solid #dbe6ee;padding:6px">Theory Test (${phaseMap[draft.student.phase]})</td><td style="border:1px solid #dbe6ee;padding:6px">${theoryS.correct}/${theoryS.total} — ${theoryS.pct}%</td></tr>
+            ${osceScores.map(o=>`<tr><td style="border:1px solid #dbe6ee;padding:6px">${o.title}</td><td style="border:1px solid #dbe6ee;padding:6px">${o.sum}/${o.max} — ${o.pct}%</td></tr>`).join('')}
+          </tbody>
+        </table>
+        <div style="background:${info.bg};border:2px solid ${info.color};border-radius:10px;padding:12px;text-align:center;margin-bottom:14px">
+          <p style="margin:0;font-size:.75rem;color:#475569">Overall Practical Performance Average</p>
+          <p style="margin:2px 0;font-size:1.6rem;font-weight:900;color:${info.color}">${avgOsce}%</p>
+          <p style="margin:0;font-weight:800;color:${info.color}">${info.label}</p>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-top:30px">
+          <p>Evaluator Signature: ______________________</p>
+          <p>Date: ______________________</p>
+        </div>
+      </div>`;
+    document.getElementById('scorecardModal').classList.remove('hidden');
+    document.getElementById('scorecardModal').classList.add('flex');
+  }
+};
+
+/* ============================= BUILD RECORD ============================= */
+function buildRecord(){
+  const iratS = scoreOfAnswers(draft.irat.answers, RAT_QUESTION_BANK);
+  const activeTeam = draft.trat.activeTeam;
+  const tratS = scoreOfTratTeam(activeTeam);
+  const theoryS = scoreOfAnswers(draft.theory.answers, currentTheoryBank());
+  const osceKeys = Object.keys(OSCE_PROTOCOLS);
+  const osceObj = {};
+  osceKeys.forEach(k=> osceObj[k] = scoreOfOsce(k));
+  const osceAvg = overallOsceAvgPct();
+  const info = competencyInfo(osceAvg);
+  return {
+    id: 'rec_'+Date.now(),
+    timestamp: new Date().toLocaleString('en-US'),
+    student: {...draft.student},
+    survey: {...draft.survey, devices:[...draft.survey.devices]},
+    irat: {correct:iratS.correct, total:iratS.total, pct:iratS.pct},
+    trat: {team:activeTeam, sum:tratS.sum, max:tratS.max, pct:tratS.pct},
+    theory: {correct:theoryS.correct, total:theoryS.total, pct:theoryS.pct, phase:draft.student.phase},
+    osce: osceObj,
+    osceAvg: osceAvg,
+    competency: info.label
+  };
+}
+
+/* ============================= DASHBOARD ============================= */
+function renderDashboard(){
+  document.getElementById('dashTotalSessions').textContent = records.length;
+  if(records.length===0){
+    document.getElementById('dashAvgTheory').textContent = '—';
+    document.getElementById('dashAvgOsce').textContent = '—';
+    document.getElementById('dashTopLevel').textContent = '—';
+    document.getElementById('compareChart').innerHTML = '<p class="text-sm text-slate-400 text-center py-6">Not enough data yet. Save at least one session to see comparisons.</p>';
+    document.getElementById('recordsTableBody').innerHTML = '';
+    return;
+  }
+  const avg = arr => Math.round(arr.reduce((a,b)=>a+b,0)/arr.length);
+  document.getElementById('dashAvgTheory').textContent = avg(records.map(r=>r.theory.pct)) + '%';
+  document.getElementById('dashAvgOsce').textContent = avg(records.map(r=>r.osceAvg)) + '%';
+  const levelCounts = {};
+  records.forEach(r=> levelCounts[r.competency] = (levelCounts[r.competency]||0)+1);
+  const topLevel = Object.entries(levelCounts).sort((a,b)=>b[1]-a[1])[0][0];
+  document.getElementById('dashTopLevel').textContent = topLevel;
+
+  const modules = [
+    {key:'irat', label:'iRAT'}, {key:'trat', label:'tRAT'},
+    {key:'theory', label:'Theory Test'}, {key:'osceAvg', label:'OSCE Practical', isFlat:true}
+  ];
+  const phaseOrder = ['Pre','Post','Follow'];
+  const phaseColors = {Pre:'var(--sky)', Post:'var(--navy)', Follow:'var(--emerald)'};
+  let html = '';
+  modules.forEach(m=>{
+    html += `<div><p class="text-sm font-bold mb-2">${m.label}</p>`;
+    phaseOrder.forEach(ph=>{
+      const vals = records.filter(r=>r.student.phase===ph).map(r=> m.isFlat? r[m.key] : r[m.key].pct);
+      const a = vals.length? avg(vals) : null;
+      html += `<div class="flex items-center gap-2 mb-1">
+        <span class="text-xs w-28 mono">${PHASE_LABELS[ph]} (${vals.length})</span>
+        <div class="flex-1 bg-slate-100 rounded-full h-4 overflow-hidden"><div class="h-4 rounded-full" style="width:${a||0}%;background:${phaseColors[ph]}"></div></div>
+        <span class="text-xs w-10 mono font-bold">${a!==null? a+'%' : 'N/A'}</span>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  document.getElementById('compareChart').innerHTML = html;
+
+  const tbody = document.getElementById('recordsTableBody');
+  tbody.innerHTML = records.slice().reverse().map(r=>{
+    const info = competencyInfo(r.osceAvg);
+    return `<tr class="border-b" style="border-color:var(--line)">
+      <td class="p-2 font-bold">${r.student.name}</td>
+      <td class="p-2">${PHASE_LABELS[r.student.phase]||r.student.phase}</td>
+      <td class="p-2 mono">${r.irat.pct}%</td>
+      <td class="p-2 mono">T${r.trat.team}: ${r.trat.pct}%</td>
+      <td class="p-2 mono">${r.theory.pct}%</td>
+      <td class="p-2 mono">${r.osceAvg}%</td>
+      <td class="p-2"><span class="badge" style="background:${info.bg};color:${info.color}">${info.label}</span></td>
+      <td class="p-2 text-xs text-slate-400">${r.timestamp}</td>
+      <td class="p-2"><button onclick="deleteRecord('${r.id}')" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash"></i></button></td>
+    </tr>`;
+  }).join('');
+}
+function deleteRecord(id){
+  if(!confirm('Delete this record permanently?')) return;
+  records = records.filter(r=>r.id!==id);
+  saveRecords();
+  renderDashboard();
+  toast('Record deleted', 'var(--rose)');
+}
+
+/* ============================= INIT ============================= */
+function renderAll(){
+  bindSessionForm();
+  bindSurveyForm();
+  renderSurveyBlock();
+  updateTheoryPhaseLabel();
+  renderMCQ('iratQuestions','irat');
+  renderTrat();
+  renderMCQ('theoryQuestions','theory');
+  renderOSCE();
+  renderDashboard();
+  if(draft.irat.submitted) app.gradeSingle('irat', {silent:true});
+  if(draft.theory.submitted) app.gradeSingle('theory', {silent:true});
+  ['irat','trat','theory'].forEach(k=> updateTimerDisplay(k));
+}
+renderAll();
+</script>
+</body>
+</html>
