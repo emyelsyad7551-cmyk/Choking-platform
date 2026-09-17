@@ -215,7 +215,12 @@
   <section id="tab-irat" class="tab-panel hidden space-y-4">
     <div id="iratLockedBanner" class="locked-banner hidden">
       <p class="font-bold"><i class="fa-solid fa-lock me-1"></i> This section is locked</p>
-      <p class="text-sm mt-1">Your instructor has not opened the iRAT yet. Please wait until it is unlocked from Instructor Controls.</p>
+      <p class="text-sm mt-1 mb-3">Ask your instructor for the iRAT access code, then enter it below.</p>
+      <div class="flex gap-2 flex-wrap">
+        <input id="sectionCodeInput-irat" type="text" placeholder="Enter code" class="border rounded-lg px-3 py-2 text-sm" style="border-color:var(--line)" onkeydown="if(event.key==='Enter') app.unlockWithCode('irat')">
+        <button onclick="app.unlockWithCode('irat')" class="px-4 py-2 rounded-lg text-white font-bold text-sm" style="background:var(--navy)">Unlock</button>
+      </div>
+      <p id="sectionCodeError-irat" class="text-sm mt-2 hidden" style="color:var(--rose)">Incorrect code. Try again.</p>
     </div>
     <div id="iratContent">
       <div class="card p-5">
@@ -241,7 +246,12 @@
   <section id="tab-trat" class="tab-panel hidden space-y-4">
     <div id="tratLockedBanner" class="locked-banner hidden">
       <p class="font-bold"><i class="fa-solid fa-lock me-1"></i> This section is locked</p>
-      <p class="text-sm mt-1">Your instructor has not opened the tRAT yet. Please wait until it is unlocked from Instructor Controls.</p>
+      <p class="text-sm mt-1 mb-3">Ask your instructor for the tRAT access code, then enter it below.</p>
+      <div class="flex gap-2 flex-wrap">
+        <input id="sectionCodeInput-trat" type="text" placeholder="Enter code" class="border rounded-lg px-3 py-2 text-sm" style="border-color:var(--line)" onkeydown="if(event.key==='Enter') app.unlockWithCode('trat')">
+        <button onclick="app.unlockWithCode('trat')" class="px-4 py-2 rounded-lg text-white font-bold text-sm" style="background:var(--navy)">Unlock</button>
+      </div>
+      <p id="sectionCodeError-trat" class="text-sm mt-2 hidden" style="color:var(--rose)">Incorrect code. Try again.</p>
     </div>
     <div id="tratContent" class="space-y-4">
       <div class="card p-5">
@@ -277,7 +287,12 @@
   <section id="tab-theory" class="tab-panel hidden space-y-4">
     <div id="theoryLockedBanner" class="locked-banner hidden">
       <p class="font-bold"><i class="fa-solid fa-lock me-1"></i> This section is locked</p>
-      <p class="text-sm mt-1">Your instructor has not opened the Theory Test yet. Please wait until it is unlocked from Instructor Controls.</p>
+      <p class="text-sm mt-1 mb-3">Ask your instructor for the Theory Test access code, then enter it below.</p>
+      <div class="flex gap-2 flex-wrap">
+        <input id="sectionCodeInput-theory" type="text" placeholder="Enter code" class="border rounded-lg px-3 py-2 text-sm" style="border-color:var(--line)" onkeydown="if(event.key==='Enter') app.unlockWithCode('theory')">
+        <button onclick="app.unlockWithCode('theory')" class="px-4 py-2 rounded-lg text-white font-bold text-sm" style="background:var(--navy)">Unlock</button>
+      </div>
+      <p id="sectionCodeError-theory" class="text-sm mt-2 hidden" style="color:var(--rose)">Incorrect code. Try again.</p>
     </div>
     <div id="theoryContent">
     <div id="theorySurveyCard" class="card p-5 hidden" dir="rtl">
@@ -389,7 +404,12 @@
   <section id="tab-osce" class="tab-panel hidden space-y-4">
     <div id="osceLockedBanner" class="locked-banner hidden">
       <p class="font-bold"><i class="fa-solid fa-lock me-1"></i> This section is locked</p>
-      <p class="text-sm mt-1">Your instructor has not opened the OSCE Practical checklists yet. Please wait until it is unlocked from Instructor Controls.</p>
+      <p class="text-sm mt-1 mb-3">Ask your instructor for the OSCE access code, then enter it below.</p>
+      <div class="flex gap-2 flex-wrap">
+        <input id="sectionCodeInput-osce" type="text" placeholder="Enter code" class="border rounded-lg px-3 py-2 text-sm" style="border-color:var(--line)" onkeydown="if(event.key==='Enter') app.unlockWithCode('osce')">
+        <button onclick="app.unlockWithCode('osce')" class="px-4 py-2 rounded-lg text-white font-bold text-sm" style="background:var(--navy)">Unlock</button>
+      </div>
+      <p id="sectionCodeError-osce" class="text-sm mt-2 hidden" style="color:var(--rose)">Incorrect code. Try again.</p>
     </div>
     <div id="osceContent" class="space-y-4">
       <div class="card p-2 flex gap-1 overflow-x-auto">
@@ -679,6 +699,15 @@ const TEAM_COUNT = 5;
 const TEAM_ICONS = ['fa-shield-heart','fa-shield-halved','fa-star','fa-bolt','fa-fire'];
 const PHASE_LABELS = {Pre:'Pre-Test', Post:'Post-Test', Follow:'Follow-Up'};
 const LOCK_KEYS = ['irat','trat','theory','osce'];
+
+// ==== Per-section access codes ====
+// Change these to whatever codes you want to give your students for each section.
+const SECTION_CODES = {
+  irat:   '1111',
+  trat:   '2222',
+  theory: '3333',
+  osce:   '4444'
+};
 
 /* ============================= STATE ============================= */
 const LS_DRAFT = 'aha2026_draft_v4';
@@ -1309,6 +1338,22 @@ function renderOSCE(){
 
 /* ============================= ACTIONS ============================= */
 const app = {
+  unlockWithCode(key){
+    const input = document.getElementById('sectionCodeInput-'+key);
+    const errorEl = document.getElementById('sectionCodeError-'+key);
+    const entered = (input.value || '').trim();
+    if(entered === SECTION_CODES[key]){
+      locks[key] = false;
+      saveLocks();
+      refreshLockGating();
+      errorEl.classList.add('hidden');
+      input.value = '';
+      toast(key.toUpperCase()+' unlocked', 'var(--emerald)');
+    } else {
+      errorEl.classList.remove('hidden');
+      toast('Incorrect code', 'var(--rose)');
+    }
+  },
   toggleLock(key){
     locks[key] = !locks[key];
     saveLocks();
